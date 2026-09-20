@@ -4,8 +4,14 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
+  # Fast gate: proves the project is coherent before anything expensive runs.
   verify:
     runs-on: ubuntu-latest
     env:
@@ -23,6 +29,8 @@ jobs:
           distribution: temurin
           java-version: 21
 
+      - uses: gradle/actions/setup-gradle@v4
+
       - name: Install dependencies
         run: npm ci
 
@@ -38,5 +46,88 @@ jobs:
       - name: Unit tests
         run: cd android && ./gradlew :pornfree-vpn:testDebugUnitTest
 
-      - name: Build the APK
-        run: cd android && ./gradlew :app:assembleDebug
+  # Builds the APK you install on a phone, and publishes it as a workflow artifact.
+  apk:
+    needs: verify
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    env:
+      ANDROID_HOME: /usr/local/lib/android/sdk
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Only used when the two secrets are configured. Without them the generated project keeps
+      # Expo's default of signing release builds with the debug key, which still installs fine on a
+      # phone - it just means a later, properly signed build cannot update over it.
+      - name: Restore the release keystore
+        id: keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PROPERTIES: ${{ secrets.ANDROID_KEYSTORE_PROPERTIES }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ] || [ -z "$KEYSTORE_PROPERTIES" ]; then
+            echo "signing=debug key (no ANDROID_KEYSTORE_BASE64 / ANDROID_KEYSTORE_PROPERTIES secrets)" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          mkdir -p credentials
+          printf '%s' "$KEYSTORE_BASE64" | base64 -d > credentials/pornfree-release.jks
+          printf '%s\n' "$KEYSTORE_PROPERTIES" > credentials/keystore.properties
+          echo "signing=release keystore" >> "$GITHUB_OUTPUT"
+
+      - name: Generate the native project
+        run: npx expo prebuild -p android
+
+      - name: Build the release APK
+        env:
+          NODE_ENV: production
+        run: cd android && ./gradlew :app:assembleRelease -PreactNativeArchitectures=arm64-v8a,armeabi-v7a
+
+      - name: Collect the APK
+        id: collect
+        run: |
+          version=$(node -p "require('./app.json').expo.version")
+          mkdir -p dist
+          cp android/app/build/outputs/apk/release/app-release.apk "dist/PornFree-${version}.apk"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          ls -lh dist
+
+      - name: Upload the APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: PornFree-${{ steps.collect.outputs.version }}
+          path: dist/*.apk
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Summary
+        run: |
+          {
+            echo "### PornFree ${{ steps.collect.outputs.version }} APK"
+            echo ""
+            echo "Download it from the **Artifacts** section at the bottom of this run page."
+            echo ""
+            echo "| | |"
+            echo "| --- | --- |"
+            echo "| Package | \`dev.pornfree.app\` |"
+            echo "| Architectures | arm64-v8a, armeabi-v7a (every real phone) |"
+            echo "| Signed with | ${{ steps.keystore.outputs.signing }} |"
+            echo "| Commit | \`${{ github.sha }}\` |"
+            echo ""
+            echo "Install it on the phone, tap the shield, grant the VPN permission and set a PIN."
+            echo "If Android refuses to install over an existing copy, uninstall that copy first: the signatures differ."
+          } >> "$GITHUB_STEP_SUMMARY"

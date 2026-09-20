@@ -40,6 +40,13 @@
       "expo-secure-store",
       "expo-sqlite",
       "./plugins/withReleaseSigning"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "535bf627-655d-4bbe-a2cc-ff56a9eb3228"
+      }
+    },
+    "owner": "kennethhy"
   }
 }
