@@ -85,7 +85,7 @@ export type UninstallState = {
  * be removed. It only takes away the icon and the reminders that come with it.
  */
 export type LauncherState = {
-  /** Whether the icon is hidden right now, which is only true while the app is not in use. */
+  /** Whether the launcher entry is switched off right now. */
   hidden: boolean;
   /** Whether the user asked for the app to hide itself. */
   hideAfterUse: boolean;

@@ -46,8 +46,8 @@
     </receiver>
 
     <!--
-      Way back in while the app is hidden from the launcher. The ongoing notification opens this,
-      which restores the icon before handing over to the UI.
+      Way back in while the launcher icon is hidden: the ongoing notification and pornfree://open
+      both open this, which hands over to the app's UI directly.
     -->
     <activity
       android:name="expo.modules.pornfreevpn.VaultActivity"

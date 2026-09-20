@@ -27,14 +27,14 @@
 - A PIN is mandatory. `startAsync` refuses to run without one, removing the PIN stops the tunnel and
   releases the uninstall lock, and the setup wizard is a gate rather than a suggestion. Never add a
   path that leaves the app filtering without a PIN in place.
-- Hiding the launcher icon (`LauncherVisibility`) must always keep a working way back in, and hiding
-  is refused when there is none (`canHide`: notifications enabled and a resolvable launch intent).
-  A disabled launcher activity cannot be started by anything, so the ways back are
-  `VaultActivity` (ongoing notification and `pornfree://open`) and the `*#*#7676#*#*` secret code.
-- The auto-hide lifecycle counter must ignore transient activities (`VaultActivity`,
-  `VpnConsentActivity`) and wait before hiding. Hiding during the hand-over from the vault to the UI
-  disables the activity that is about to be launched, which locks the user out - this has already
-  happened once.
+- Hiding the launcher icon (`LauncherVisibility`) toggles the `LauncherAlias` activity-alias created
+  by `plugins/withLauncherAlias.js`. It must never disable `MainActivity`: an app whose launcher
+  activity is disabled cannot be started by anything - not its own notification, not a deep link, not
+  adb - and doing that locked users out of their own app once already.
+- Keep every way back in working while the icon is hidden: the ongoing notification and
+  `pornfree://open` (both through `VaultActivity`), Recents, `adb shell am start`, and the
+  `*#*#7676#*#*` secret code. Hiding is refused when there is no reachable way back
+  (`canHide`: notifications enabled and a resolvable launch intent).
 
 ## Verify before claiming done
 

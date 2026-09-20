@@ -2,7 +2,7 @@
   "expo": {
     "name": "PornFree",
     "slug": "pornfree",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "pornfree",
@@ -13,7 +13,7 @@
     ],
     "android": {
       "package": "dev.pornfree.app",
-      "versionCode": 3,
+      "versionCode": 4,
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "adaptiveIcon": {
@@ -25,6 +25,7 @@
     },
     "plugins": [
       "expo-router",
+      "./plugins/withLauncherAlias",
       [
         "expo-splash-screen",
         {

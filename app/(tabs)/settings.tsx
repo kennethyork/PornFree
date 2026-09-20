@@ -235,11 +235,11 @@ export default function SettingsScreen() {
           title="Hide from the launcher"
           subtitle={
             launcher?.hidden
-              ? 'The icon is hidden right now. Open the app from the ongoing notification, dial ' +
-                `*#*#${launcher?.secretCode ?? '7676'}#*#*, or open pornfree://open in a browser.`
+              ? 'PornFree has no launcher icon. Open it from the ongoing notification, or with ' +
+                `pornfree://open. Dialling *#*#${launcher?.secretCode ?? '7676'}#*#* brings the icon back.`
               : launcher?.notificationsEnabled === false
-                ? 'Notifications are switched off for PornFree, and without the ongoing notification there would be no way back into a hidden app. Allow them first.'
-                : 'The icon disappears as soon as you leave the app. This is not uninstall protection: Android still lists PornFree under Settings → Apps, where it can be removed.'
+                ? 'Notifications are switched off for PornFree. The ongoing notification is how a hidden app is opened, so allow them first or you would be locked out.'
+                : 'Removes PornFree from your launcher. The app keeps working, and the ongoing notification opens it. Not uninstall protection: Settings → Apps still lists it.'
           }
           value={launcher?.hideAfterUse ?? false}
           disabled={busy || !launcher}

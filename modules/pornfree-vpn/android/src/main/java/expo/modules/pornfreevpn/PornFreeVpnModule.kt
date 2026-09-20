@@ -124,12 +124,6 @@ class PornFreeVpnModule : Module() {
 
     Events("onStats", "onBlocked", "onStateChange")
 
-    OnCreate {
-      // Hiding the launcher icon is re-applied when the app is left, which needs the application
-      // rather than any particular activity.
-      appContext.reactContext?.let { LauncherVisibility.registerAutoHide(it) }
-    }
-
     OnStartObserving {
       observing = true
       handler.post(ticker)

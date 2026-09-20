@@ -104,12 +104,6 @@ class PornFreeVpnService : VpnService() {
   private var persistedBlocked = 0L
   private var persistedAllowed = 0L
 
-  override fun onCreate() {
-    super.onCreate()
-    // The tunnel outlives the UI, so it also keeps the launcher icon hidden between visits.
-    LauncherVisibility.registerAutoHide(this)
-  }
-
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     when (intent?.action) {
       ACTION_STOP -> {

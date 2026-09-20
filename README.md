@@ -165,26 +165,33 @@ your launcher.
 
 ### Hiding the icon
 
-Hiding is opt-in, under **Settings → Visibility**. When it is on, the icon disappears as soon as you
-leave the app and comes back only while you are using it again, so nothing reminds you by accident.
-The same screen turns it off again, as does any of the ways back in below.
+Hiding is opt-in, under **Settings → Visibility**. When it is on, PornFree has no launcher icon: not on
+your home screen, not in the app drawer, and no reminder every time you swipe past. Turn it off from
+that same screen, or from any of the ways back in below.
 
-Hiding is only allowed while **notifications are enabled** for PornFree. That is not a nag: the ongoing
-notification is the reliable way back into a hidden app, and Android does not let anything start a
-disabled launcher activity - not even the app itself. With notifications off, hiding would be a trap,
-so it is refused with an explanation instead.
+It works by moving the launcher entry onto an `<activity-alias>`
+([plugins/withLauncherAlias.js](plugins/withLauncherAlias.js)) and disabling that alias. The app's real
+activity is never disabled, and that detail is the whole reason this is safe: an app whose *launcher
+activity* is switched off cannot be started by anything at all - not by its own notification, not by a
+deep link, not even by adb. The first version of this feature did that and locked people out of their
+own app, which is also why the alias exists rather than a plain "disable the icon" toggle.
+
+Hiding is only allowed while **notifications are enabled** for PornFree, because the ongoing
+notification is how most people get back. With notifications off, hiding would be a trap, so it is
+refused with an explanation instead.
 
 ### Getting back in when the app is hidden
 
 | Way in | When it works |
 | --- | --- |
 | Tap the ongoing **Protection** notification | Whenever filtering is running, which is the normal case. |
-| Open `pornfree://open` (any browser, bookmark, or QR code) | Always. The vault activity restores the icon and opens the app. |
-| Dial `*#*#7676#*#*` | On dialers that still dispatch secret codes; device dependent. |
-| `adb shell pm enable dev.pornfree.app/dev.pornfree.app.MainActivity` | From a computer with adb and USB debugging. |
+| Open `pornfree://open` (any browser, bookmark, or QR code) | Always. |
+| **Recents** - swipe up and pick PornFree | Whenever it is still in the recent-tasks list. |
+| Dial `*#*#7676#*#*` | On dialers that still dispatch secret codes; device dependent. Also brings the icon back. |
+| `adb shell am start -n dev.pornfree.app/.MainActivity` | From a computer with adb and USB debugging. |
 | *Settings → Apps → PornFree → Uninstall* | Always. Reinstalling loses your lists and statistics. |
 
-The first three also switch hiding *off*, so you can decide again from Settings.
+Inside the app, **Settings → Visibility** switches hiding off again, as does the secret code.
 
 If the vault ever fails to open the app, it shows a plain screen with a retry button rather than
 disappearing silently, because a silent failure there means being locked out of your own app.
@@ -237,8 +244,8 @@ Clearing the app's data resets all of it.
 | Symptom | Fix |
 | --- | --- |
 | Setup will not let me continue | A PIN is required; there is no way past that screen, by design. |
-| The app vanished from my launcher | That is the hiding feature. Open it from the ongoing notification, or `pornfree://open`, or `*#*#7676#*#*`. |
-| I hid the app and cannot get back in | `adb shell pm enable dev.pornfree.app/dev.pornfree.app.MainActivity`, or open `pornfree://open`, or uninstall and reinstall. |
+| The app vanished from my launcher | That is the hiding feature. Open it from the ongoing notification, `pornfree://open`, Recents, or `*#*#7676#*#*`. |
+| I hid the app and cannot get back in | `adb shell am start -n dev.pornfree.app/.MainActivity`, or `pornfree://open`, or uninstall and reinstall. Settings → Apps always lists it. |
 | Protection stops after a while | Exclude PornFree from battery optimisation. |
 | A site still loads | Add it to a custom list; check Private DNS is Off/Automatic and browser DoH is disabled. |
 | Some app broke | Add its domain to the allowlist, or switch the resolver preset. |
