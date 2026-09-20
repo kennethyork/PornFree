@@ -108,6 +108,8 @@ export function ProtectionProvider({ children }: { children: ReactNode }) {
         if (
           !cancelled &&
           !autostartTried.current &&
+          // Native code refuses to start the tunnel without a PIN, so do not ask yet.
+          current.hasPin &&
           current.shouldRun &&
           !current.running &&
           current.permissionGranted

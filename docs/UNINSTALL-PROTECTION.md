@@ -49,7 +49,8 @@ jail for the device.
 
 ## Setup
 
-1. **Set a PIN** in *Settings → PIN & commitment*. The lock refuses to switch on without one.
+1. **Have a PIN.** You set one during setup and it cannot be skipped; the lock additionally refuses
+   to switch on without one.
 2. On the phone: *Settings → About phone → tap Build number seven times*, then enable **USB
    debugging** in Developer options.
 3. **Remove every account** from the phone (*Settings → Passwords & accounts*). Android refuses to

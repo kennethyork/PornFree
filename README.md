@@ -47,8 +47,9 @@ A blocker that overpromises is worse than no blocker, so:
 - Five resolver presets, all of them family filters, so upstream filtering backs up the lists
 - Optional blocking of encrypted-DNS bypass, with a bundled list of ~65 DoH/DoT endpoints
 - Choose how blocked names answer: empty answer, `0.0.0.0`, or `NXDOMAIN`
-- PIN (4-8 digits) required to switch protection off, change lists, edit the allowlist, clear stats,
-  or turn off uninstall protection
+- PIN (4-8 digits) mandatory from the first screen: the tunnel will not start without one, and the
+  PIN is required to switch protection off, change lists, edit the allowlist, clear stats, or turn
+  off uninstall protection
 - Commitment lock: protection refuses to be switched off until a timer you set runs out
 - Stats: per-day chart, top blocked domains, session and lifetime counters
 - Restarts itself after a reboot when the VPN permission is still granted
@@ -96,11 +97,24 @@ to this app lives in `modules/blockporna-vpn/`.
 
 ## First run
 
-1. Open the app and tap the shield. Android asks once for permission to create a VPN.
-2. The bundled adult list is installed automatically and filtering starts.
-3. Set a PIN in **Settings → PIN & commitment** — until you do, nothing stops the app from being
-   switched off in a weak moment.
-4. Optionally set up uninstall protection (**Settings → Uninstall protection**).
+The app opens on a three-step setup and does not let you past it without a PIN. That is not a
+nag screen: native code refuses to create the tunnel while no PIN is set, so "no PIN" and "no
+protection" are the same state by construction.
+
+1. **Choose a PIN** (4-8 digits, entered twice). It cannot be recovered, and clearing the app data
+   is the only reset.
+2. **Grant the VPN permission.** Android shows its one-time consent dialog.
+3. **Finish.** The bundled adult list is already installed and filtering starts immediately.
+
+Two consequences worth knowing:
+
+- Removing the PIN stops protection and releases the uninstall lock. The setup screen comes back
+  until a new PIN exists.
+- Reaching the end of setup does not require starting protection: choosing *Not now* leaves the PIN
+  in place and the app usable, with the shield ready when you want it.
+
+Optionally set up uninstall protection (**Settings → Uninstall protection**) and a commitment lock
+(**Settings → PIN & commitment**).
 
 ## Development
 
@@ -146,6 +160,7 @@ Clearing the app's data resets all of it.
 
 | Symptom | Fix |
 | --- | --- |
+| Setup will not let me continue | A PIN is required; there is no way past that screen, by design. |
 | Protection stops after a while | Exclude BlockPorna from battery optimisation. |
 | A site still loads | Add it to a custom list; check Private DNS is Off/Automatic and browser DoH is disabled. |
 | Some app broke | Add its domain to the allowlist, or switch the resolver preset. |

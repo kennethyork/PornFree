@@ -11,6 +11,7 @@ import {
 
 import Native from '../../modules/blockporna-vpn';
 import { PinSheet } from '../components/pin-sheet';
+import { isOnboarded, setOnboarded } from '../lib/onboarding';
 import { hashPin, isValidPin } from '../lib/pin';
 
 type Mode = 'verify' | 'create';
@@ -24,6 +25,9 @@ type PendingRequest = {
 type SecurityValue = {
   ready: boolean;
   hasPin: boolean;
+  /** False until the first-run setup has been completed. */
+  onboarded: boolean;
+  completeOnboarding: () => Promise<void>;
   /** Prompts for the PIN when one is set and returns its verified hash, otherwise null. */
   acquirePin: (reason?: string, mode?: Mode) => Promise<string | null>;
   refresh: () => Promise<void>;
@@ -39,6 +43,8 @@ const UNLOCK_TTL_MS = 5 * 60 * 1000;
 export function SecurityProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
   const [hasPin, setHasPin] = useState(false);
+  // Optimistic default: the wizard only appears once we know setup has not happened.
+  const [onboarded, setOnboardedState] = useState(true);
   const [pending, setPending] = useState<PendingRequest | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -60,8 +66,17 @@ export function SecurityProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    void refresh().finally(() => setReady(true));
+    void (async () => {
+      const [done] = await Promise.all([isOnboarded(), refresh()]);
+      setOnboardedState(done);
+      setReady(true);
+    })();
   }, [refresh]);
+
+  const completeOnboarding = useCallback(async () => {
+    await setOnboarded(true);
+    setOnboardedState(true);
+  }, []);
 
   const forget = useCallback(() => {
     cache.current = null;
@@ -139,8 +154,8 @@ export function SecurityProvider({ children }: { children: ReactNode }) {
   );
 
   const value = useMemo<SecurityValue>(
-    () => ({ ready, hasPin, acquirePin, refresh, forget, invalidate }),
-    [acquirePin, forget, hasPin, invalidate, ready, refresh]
+    () => ({ ready, hasPin, onboarded, completeOnboarding, acquirePin, refresh, forget, invalidate }),
+    [acquirePin, completeOnboarding, forget, hasPin, invalidate, onboarded, ready, refresh]
   );
 
   return (

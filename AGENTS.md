@@ -24,6 +24,9 @@
   imports so they remain covered by JVM unit tests. Add a test with any change to them.
 - Anything that weakens protection (stopping the tunnel, changing lists, clearing stats, releasing
   the uninstall lock) must require the PIN, and the check belongs in native code.
+- A PIN is mandatory. `startAsync` refuses to run without one, removing the PIN stops the tunnel and
+  releases the uninstall lock, and the setup wizard is a gate rather than a suggestion. Never add a
+  path that leaves the app filtering without a PIN in place.
 
 ## Verify before claiming done
 

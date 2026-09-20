@@ -30,7 +30,7 @@ class WrongPinException : CodedException("ERR_WRONG_PIN", "That PIN is not corre
 
 class PinRequiredException : CodedException(
   "ERR_PIN_REQUIRED",
-  "Set a PIN first: it is what protects this setting",
+  "Set a PIN first: BlockPorna refuses to run without one",
   null
 )
 
@@ -131,6 +131,10 @@ class BlockPornaVpnModule : Module() {
     }
 
     AsyncFunction("startAsync") { options: StartOptions ->
+      // The PIN is not optional: protection may not run unprotected, so starting the tunnel
+      // requires that a PIN already exists. It does not have to be re-entered here - starting is
+      // not a weakening action - but it must be in place.
+      if (Store.pinHash(reactContext) == null) throw PinRequiredException()
       applyConfig(options)
       if (!isPermissionGranted()) throw VpnPermissionMissingException()
       BlockPornaVpnService.start(reactContext)
@@ -224,11 +228,15 @@ class BlockPornaVpnModule : Module() {
       if (Store.pinHash(context) != null) requirePin(options.currentPinHash)
       val hash = options.hash
       if (hash.isNullOrEmpty()) {
+        // The invariant this app is built on: no PIN, no protection. Removing the PIN therefore
+        // stops filtering and releases the uninstall lock, instead of leaving a blocker that
+        // nobody has to unlock first.
         Store.setPinHash(context, null)
         Store.setCommitmentUntil(context, 0L)
+        Store.setShouldRun(context, false)
+        BlockPornaVpnService.stop(context)
+        VpnRuntime.endSession()
         if (isDeviceOwner()) {
-          // Without a PIN there is nothing standing between a user and the uninstall lock,
-          // so the lock is released together with the PIN.
           try {
             devicePolicyManager()?.setUninstallBlocked(adminComponent(context), context.packageName, false)
           } catch (_: Exception) {
@@ -251,7 +259,9 @@ class BlockPornaVpnModule : Module() {
       val hours = options.hours.coerceIn(0.0, 24.0 * 365.0)
       val until = if (hours <= 0.0) 0L else System.currentTimeMillis() + (hours * 3_600_000.0).toLong()
       Store.setCommitmentUntil(context, until)
-      if (until > 0L && !VpnRuntime.running && isPermissionGranted()) {
+      // Locking filtering for a while only makes sense while filtering is running, and it may
+      // never be the thing that starts a tunnel that has no PIN behind it.
+      if (until > 0L && !VpnRuntime.running && isPermissionGranted() && Store.pinHash(context) != null) {
         BlockPornaVpnService.start(context)
       }
       status()
