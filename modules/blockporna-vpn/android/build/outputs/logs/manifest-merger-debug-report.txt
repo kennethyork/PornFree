@@ -1,0 +1,114 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:1:1-62:12
+INJECTED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:1:1-62:12
+	package
+		INJECTED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:1:11-69
+uses-permission#android.permission.INTERNET
+ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:3:3-65
+	android:name
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:3:20-62
+uses-permission#android.permission.ACCESS_NETWORK_STATE
+ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:4:3-77
+	android:name
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:4:20-74
+uses-permission#android.permission.FOREGROUND_SERVICE
+ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:5:3-75
+	android:name
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:5:20-72
+uses-permission#android.permission.FOREGROUND_SERVICE_SPECIAL_USE
+ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:6:3-87
+	android:name
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:6:20-84
+uses-permission#android.permission.POST_NOTIFICATIONS
+ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:7:3-75
+	android:name
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:7:20-72
+uses-permission#android.permission.RECEIVE_BOOT_COMPLETED
+ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:8:3-79
+	android:name
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:8:20-76
+application
+ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:10:3-61:17
+service#expo.modules.blockpornavpn.BlockPornaVpnService
+ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:17:5-28:15
+	android:exported
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:19:7-30
+	android:permission
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:20:7-63
+	android:foregroundServiceType
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:21:7-49
+	android:name
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:18:7-69
+property#android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE
+ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:22:7-24:31
+	android:value
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:24:9-28
+	android:name
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:23:9-68
+intent-filter#action:name:android.net.VpnService
+ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:25:7-27:23
+action#android.net.VpnService
+ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:26:9-57
+	android:name
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:26:17-54
+activity#expo.modules.blockpornavpn.VpnConsentActivity
+ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:31:5-36:69
+	android:excludeFromRecents
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:33:7-40
+	android:noHistory
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:35:7-31
+	android:exported
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:34:7-31
+	android:theme
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:36:7-66
+	android:name
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:32:7-67
+receiver#expo.modules.blockpornavpn.BootReceiver
+ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:38:5-46:16
+	android:enabled
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:40:7-29
+	android:exported
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:41:7-31
+	android:name
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:39:7-61
+intent-filter#action:name:android.intent.action.BOOT_COMPLETED+action:name:android.intent.action.MY_PACKAGE_REPLACED
+ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:42:7-45:23
+action#android.intent.action.BOOT_COMPLETED
+ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:43:9-71
+	android:name
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:43:17-68
+action#android.intent.action.MY_PACKAGE_REPLACED
+ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:44:9-76
+	android:name
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:44:17-73
+receiver#expo.modules.blockpornavpn.BlockPornaDeviceAdminReceiver
+ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:49:5-59:16
+	android:exported
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:51:7-30
+	android:permission
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:52:7-64
+	android:name
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:50:7-78
+meta-data#android.app.device_admin
+ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:53:7-55:59
+	android:resource
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:55:9-56
+	android:name
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:54:9-48
+intent-filter#action:name:android.app.action.DEVICE_ADMIN_ENABLED
+ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:56:7-58:23
+action#android.app.action.DEVICE_ADMIN_ENABLED
+ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:57:9-74
+	android:name
+		ADDED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml:57:17-71
+uses-sdk
+INJECTED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml
+INJECTED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /home/kennethhy/Documents/BlockPorna/modules/blockporna-vpn/android/src/main/AndroidManifest.xml

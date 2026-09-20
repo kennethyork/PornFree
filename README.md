@@ -1,50 +1,163 @@
-# Welcome to your Expo app 👋
+# BlockPorna
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+An Android-only, open-source porn blocker built with Expo. It filters DNS on the device, keeps
+working offline, has no account, no server and no telemetry, and does not care which app is asking.
 
-## Get started
-
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+Shield  →  blocklists + allowlist  →  every DNS lookup on the phone  →  blocked or relayed
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## What it actually does
 
-## Learn more
+BlockPorna runs a local `VpnService` that captures **only DNS**. Android routes the addresses of
+public resolvers into the tunnel, so lookups are intercepted no matter which app asks for them or
+whether the app hard-codes `8.8.8.8`. Each query is matched against your blocklists, blocked names
+are answered locally, and everything else is relayed to a family-safe resolver you choose.
 
-To learn more about developing your project with Expo, look at the following resources:
+Because no general traffic enters the tunnel, there is no userspace TCP/IP stack, no throughput
+cost and negligible battery impact. Requests to known DNS-over-HTTPS and DNS-over-TLS endpoints
+are answered with an ICMP "port unreachable", which makes apps fail fast and fall back to the plain
+DNS that *is* filtered.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Read [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the details.
 
-## Join the community
+## Honest limitations
 
-Join our community of developers creating universal apps.
+A blocker that overpromises is worse than no blocker, so:
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- **Blocking is by domain name.** A site reached by IP address, or served from a domain no list
+  knows yet, gets through. The upstream family resolver is the second line of defence.
+- **Android cannot put a password on the uninstall button.** The uninstall dialog belongs to the OS;
+  no app can intercept it. BlockPorna's PIN protects everything *inside* the app, and real uninstall
+  protection is available through Android's **device owner** mode, which has to be granted once over
+  USB. See [docs/UNINSTALL-PROTECTION.md](docs/UNINSTALL-PROTECTION.md).
+- **A custom encrypted-DNS setting bypasses filtering.** If you keep Android's *Private DNS* pointed
+  at a hostname, or a browser's own DoH resolver, lookups can go somewhere BlockPorna cannot see.
+  Set *Private DNS* to Off/Automatic and turn off "Use secure DNS" in Chrome and Firefox.
+- **Never enable "Block connections without VPN".** BlockPorna is a DNS filter, not a full tunnel;
+  lockdown mode would route all traffic into a tunnel that only understands DNS and take you offline.
+- **It is not parental-control software.** Per-app rules, device profiles, remote management and
+  tamper-proof installation are out of scope.
+
+## Features
+
+- DNS filtering for every app on the device, from a bundled 156,000-domain adult list
+- Additional lists one tap away (OISD NSFW, and any hosts file or domain list by URL)
+- Allowlist for domains a list is too aggressive about
+- Five resolver presets, all of them family filters, so upstream filtering backs up the lists
+- Optional blocking of encrypted-DNS bypass, with a bundled list of ~65 DoH/DoT endpoints
+- Choose how blocked names answer: empty answer, `0.0.0.0`, or `NXDOMAIN`
+- PIN (4-8 digits) required to switch protection off, change lists, edit the allowlist, clear stats,
+  or turn off uninstall protection
+- Commitment lock: protection refuses to be switched off until a timer you set runs out
+- Stats: per-day chart, top blocked domains, session and lifetime counters
+- Restarts itself after a reboot when the VPN permission is still granted
+- Optional device-owner mode: uninstall lock plus always-on VPN
+- No analytics, no accounts, no network calls other than DNS and list downloads
+
+## Screenshots
+
+Build and run it — the UI is a dark, four-tab app: **Shield**, **Lists**, **Stats**, **Settings**.
+
+## Requirements
+
+| Tool | Version |
+| --- | --- |
+| Node.js | 20.19+ (or 22.13+, 24.3+) |
+| JDK | 17 or 21 |
+| Android SDK | platform 36, build-tools 36 |
+| Android device or emulator | Android 7.0 (API 24) or newer |
+
+## Build and install
+
+This app contains native code (a Kotlin Expo module), so **Expo Go cannot run it**.
+
+```sh
+npm install
+
+# Build the debug APK and install it on the connected device, in one step
+npx expo run:android
+```
+
+Or produce an APK without a device attached:
+
+```sh
+npx expo prebuild -p android
+cd android && ./gradlew assembleDebug
+# -> android/app/build/outputs/apk/debug/app-debug.apk
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+```
+
+A release build needs a signing key; create `android/app/keystore.properties` or use
+`eas build -p android --profile production` with your own EAS project.
+
+The `android/` directory is generated by `expo prebuild` and is not checked in. Everything specific
+to this app lives in `modules/blockporna-vpn/`.
+
+## First run
+
+1. Open the app and tap the shield. Android asks once for permission to create a VPN.
+2. The bundled adult list is installed automatically and filtering starts.
+3. Set a PIN in **Settings → PIN & commitment** — until you do, nothing stops the app from being
+   switched off in a weak moment.
+4. Optionally set up uninstall protection (**Settings → Uninstall protection**).
+
+## Development
+
+```sh
+npm run typecheck                                    # TypeScript
+cd android && ./gradlew :blockporna-vpn:testDebugUnitTest   # Kotlin unit tests (19 tests)
+```
+
+The DNS wire format, the matcher and the list parser are pure Kotlin with no Android imports, so
+they are covered by JVM unit tests: `modules/blockporna-vpn/android/src/test/`.
+
+## Project layout
+
+```
+app/                              screens (expo-router)
+  (tabs)/index.tsx                shield, today's counters, recent blocks
+  (tabs)/lists.tsx                blocklists, custom lists, allowlist
+  (tabs)/stats.tsx                history and top domains
+  (tabs)/settings.tsx             resolver, blocking mode, network, behaviour
+  settings/security.tsx           PIN and commitment lock
+  settings/uninstall.tsx          device owner setup, uninstall lock
+src/                              app logic: state, PIN, SQLite history, theme
+modules/blockporna-vpn/           the local Expo module (Kotlin)
+  android/src/main/java/...       VpnService, DNS/IP wire format, matcher, store
+  android/src/main/assets/        bundled blocklists
+  android/src/test/               JVM unit tests
+docs/                             architecture and uninstall-protection notes
+```
+
+## Privacy
+
+Everything happens on the device.
+
+- **Leaves the device:** the DNS queries themselves, relayed to the resolver you picked, and
+  blocklist downloads from URLs you added. Nothing else, ever.
+- **Stored on the device:** your settings, the list files, a rolling seven-day log of blocked
+  domain names, daily counters, and the SHA-256 of your PIN (the PIN itself is never stored).
+- **Not collected:** which app made a request, page contents, identifiers, crash reports, analytics.
+
+Clearing the app's data resets all of it.
+
+## Troubleshooting
+
+| Symptom | Fix |
+| --- | --- |
+| Protection stops after a while | Exclude BlockPorna from battery optimisation. |
+| A site still loads | Add it to a custom list; check Private DNS is Off/Automatic and browser DoH is disabled. |
+| Some app broke | Add its domain to the allowlist, or switch the resolver preset. |
+| Nothing loads at all | Turn off "Block connections without VPN" in the system VPN settings. |
+| DNS feels slow | Your upstream resolver is slow; pick a closer preset in Settings. |
+
+## Contributing
+
+Issues and pull requests are welcome. Please keep the promises honest: if a change makes the app
+claim protection it cannot deliver, it will not be merged. Run the type checks and the unit tests
+before opening a pull request.
+
+## License
+
+GPL-3.0-or-later. See [LICENSE](LICENSE).
