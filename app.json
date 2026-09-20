@@ -2,7 +2,7 @@
   "expo": {
     "name": "PornFree",
     "slug": "pornfree",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "pornfree",
@@ -13,7 +13,7 @@
     ],
     "android": {
       "package": "dev.pornfree.app",
-      "versionCode": 2,
+      "versionCode": 3,
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "adaptiveIcon": {

@@ -160,9 +160,14 @@ Two consequences worth knowing:
 - Reaching the end of setup does not require starting protection: choosing *Not now* leaves the PIN
   in place and the app usable, with the shield ready when you want it.
 
-The last step offers to **hide the app from your launcher**: the icon disappears as soon as you leave,
-and comes back only while you are using it again. It is on by default because the whole point is to
-stop the app from nagging you, but it is a toggle in **Settings → Visibility** either way.
+Setup changes nothing else: after the last step the app behaves like any other app, with its icon in
+your launcher.
+
+### Hiding the icon
+
+Hiding is opt-in, under **Settings → Visibility**. When it is on, the icon disappears as soon as you
+leave the app and comes back only while you are using it again, so nothing reminds you by accident.
+The same screen turns it off again, as does any of the ways back in below.
 
 Hiding is only allowed while **notifications are enabled** for PornFree. That is not a nag: the ongoing
 notification is the reliable way back into a hidden app, and Android does not let anything start a
