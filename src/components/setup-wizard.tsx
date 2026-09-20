@@ -1,9 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Native from '../../modules/pornfree-vpn';
+import { ensureNotificationPermission } from '../lib/notifications';
 import { useProtection } from '../state/protection';
 import { useSecurity } from '../state/security';
 import { colors, radius, space } from '../theme';
@@ -49,7 +50,25 @@ export function SetupWizard() {
   const finish = async () => {
     setFinishing(true);
     try {
-      if (hideAfterSetup) await hideTheApp();
+      if (hideAfterSetup) {
+        // The ongoing notification is how a hidden app gets opened again, so hiding without it
+        // would be a trap. Native code refuses too; this is the friendly version of that.
+        const allowed = await ensureNotificationPermission();
+        if (!allowed) {
+          Alert.alert(
+            'Notifications are off',
+            'PornFree will keep its icon for now. The ongoing notification is the only way back into ' +
+              'a hidden app, so hiding stays off until notifications are allowed. You can turn ' +
+              'hiding on later in Settings → Visibility.'
+          );
+        } else {
+          try {
+            await hideTheApp();
+          } catch (failure) {
+            Alert.alert('Could not hide the app', (failure as Error).message);
+          }
+        }
+      }
       await completeOnboarding();
     } finally {
       setFinishing(false);

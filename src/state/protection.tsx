@@ -8,7 +8,6 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { PermissionsAndroid, Platform } from 'react-native';
 
 import Native from '../../modules/pornfree-vpn';
 import type {
@@ -18,6 +17,7 @@ import type {
   ProtectionStatus,
 } from '../../modules/pornfree-vpn';
 import { pruneHistory, recordBlocked } from '../lib/history';
+import { ensureNotificationPermission } from '../lib/notifications';
 
 type ProtectionValue = {
   ready: boolean;
@@ -39,24 +39,6 @@ type ProtectionValue = {
 };
 
 const ProtectionContext = createContext<ProtectionValue | null>(null);
-
-/**
- * Android 13+ hides the ongoing notification (and with it the reminder that protection is on)
- * unless this permission is granted. Refusing it does not stop filtering.
- */
-async function ensureNotificationPermission(): Promise<void> {
-  if (Platform.OS !== 'android' || Number(Platform.Version) < 33) return;
-  try {
-    const already = await PermissionsAndroid.check(
-      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
-    );
-    if (!already) {
-      await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
-    }
-  } catch {
-    // Never block starting protection on a permission prompt.
-  }
-}
 
 function messageFor(failure: unknown): string {
   if (failure && typeof failure === 'object' && 'message' in failure) {

@@ -91,6 +91,12 @@ export type LauncherState = {
   hideAfterUse: boolean;
   /** Dial `*#*#<secretCode>#*#*` to bring the icon back without a notification to tap. */
   secretCode: string;
+  /** False when hiding would leave no reachable way back into the app. */
+  canHide: boolean;
+  /** Whether Android will actually show the ongoing notification. */
+  notificationsEnabled: boolean;
+  /** Whether the app's own UI can be started again from the vault. */
+  launchResolvable: boolean;
 };
 
 export type BlockedDomainEvent = {

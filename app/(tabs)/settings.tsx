@@ -8,6 +8,7 @@ import Native from '../../modules/pornfree-vpn';
 import type { BlockMode, LauncherState, UninstallState } from '../../modules/pornfree-vpn';
 import { Card, Chevron, Pill, SettingRow, ToggleRow, styles as ui } from '../../src/components/ui';
 import { Links } from '../../src/lib/links';
+import { ensureNotificationPermission } from '../../src/lib/notifications';
 import { RESOLVER_PRESETS, resolverPresetFor } from '../../src/lib/lists';
 import { useProtection } from '../../src/state/protection';
 import { useSecurity } from '../../src/state/security';
@@ -83,6 +84,21 @@ export default function SettingsScreen() {
   const setHidden = useCallback(
     (hidden: boolean) => {
       void (async () => {
+        if (hidden) {
+          const allowed = await ensureNotificationPermission();
+          if (!allowed) {
+            Alert.alert(
+              'Notifications are off',
+              'The ongoing notification is the only way back into a hidden app. Allow notifications ' +
+                'for PornFree first, or you would be locked out of your own app.',
+              [
+                { text: 'Not now', style: 'cancel' },
+                { text: 'Notification settings', onPress: () => void Linking.openSettings() },
+              ]
+            );
+            return;
+          }
+        }
         const pin = await acquirePin(
           hidden
             ? 'Hiding the app needs your PIN.'
@@ -92,7 +108,10 @@ export default function SettingsScreen() {
         try {
           setLauncher(await Native.setLauncherHiddenAsync({ hidden, pinHash: pin }));
         } catch (failure) {
-          Alert.alert('Could not change launcher visibility', (failure as Error).message);
+          Alert.alert('Could not change launcher visibility', (failure as Error).message, [
+            { text: 'OK' },
+            { text: 'Notification settings', onPress: () => void Linking.openSettings() },
+          ]);
         }
       })();
     },
@@ -216,9 +235,11 @@ export default function SettingsScreen() {
           title="Hide from the launcher"
           subtitle={
             launcher?.hidden
-              ? 'The icon is hidden right now. Open the app from the ongoing notification, or dial ' +
-                `*#*#${launcher?.secretCode ?? '7676'}#*#* to bring it back.`
-              : 'The icon disappears as soon as you leave the app. This is not uninstall protection: Android still lists PornFree under Settings → Apps, where it can be removed.'
+              ? 'The icon is hidden right now. Open the app from the ongoing notification, dial ' +
+                `*#*#${launcher?.secretCode ?? '7676'}#*#*, or open pornfree://open in a browser.`
+              : launcher?.notificationsEnabled === false
+                ? 'Notifications are switched off for PornFree, and without the ongoing notification there would be no way back into a hidden app. Allow them first.'
+                : 'The icon disappears as soon as you leave the app. This is not uninstall protection: Android still lists PornFree under Settings → Apps, where it can be removed.'
           }
           value={launcher?.hideAfterUse ?? false}
           disabled={busy || !launcher}

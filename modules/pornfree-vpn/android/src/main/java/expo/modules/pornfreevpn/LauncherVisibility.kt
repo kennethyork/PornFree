@@ -2,11 +2,14 @@ package expo.modules.pornfreevpn
 
 import android.app.Activity
 import android.app.Application
+import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 
 /**
@@ -29,6 +32,36 @@ object LauncherVisibility {
   const val SECRET_CODE = "7676"
 
   @Volatile private var registered = false
+
+  private val handler = Handler(Looper.getMainLooper())
+
+  /**
+   * Activities that are plumbing rather than UI: the vault that hands over to the app, and the
+   * headless activity that carries the system VPN consent result. They must not count as "the app
+   * is open", or the hand-over between them looks like the app being left behind.
+   */
+  private fun isTransient(activity: Activity): Boolean =
+    activity is VaultActivity || activity is VpnConsentActivity
+
+  /** Whether hiding is safe: there has to be a way back that does not depend on the icon. */
+  fun canHide(context: Context): Boolean =
+    notificationsEnabled(context) && launchIntent(context) != null
+
+  fun notificationsEnabled(context: Context): Boolean = try {
+    val manager = context.getSystemService(NotificationManager::class.java)
+    manager?.areNotificationsEnabled() ?: false
+  } catch (_: Exception) {
+    false
+  }
+
+  fun readiness(context: Context): Map<String, Any> = mapOf(
+    "hidden" to isHidden(context),
+    "hideAfterUse" to hideLauncher(context),
+    "secretCode" to SECRET_CODE,
+    "canHide" to canHide(context),
+    "notificationsEnabled" to notificationsEnabled(context),
+    "launchResolvable" to (launchIntent(context) != null)
+  )
 
   fun hideLauncher(context: Context): Boolean =
     Store.prefs(context).getBoolean(KEY_HIDE, false)
@@ -72,17 +105,32 @@ object LauncherVisibility {
     registered = true
     application.registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
       private var started = 0
+      private var appContext: Context? = null
+
+      private val hideNow = Runnable {
+        val context = appContext ?: return@Runnable
+        if (started <= 0 && hideLauncher(context)) hide(context)
+      }
 
       override fun onActivityStarted(activity: Activity) {
+        if (isTransient(activity)) return
+        appContext = activity.applicationContext
         started++
+        // A new activity is on its way up; cancel any pending hide.
+        handler.removeCallbacks(hideNow)
       }
 
       override fun onActivityStopped(activity: Activity) {
+        if (isTransient(activity)) return
+        appContext = activity.applicationContext
         started--
         if (started > 0) return
         started = 0
-        val appContext = activity.applicationContext
-        if (hideLauncher(appContext)) hide(appContext)
+        // Wait briefly before hiding. Handing over between activities (the vault opening the app,
+        // a rotation) passes through a moment with nothing started, and hiding there would disable
+        // the activity that is about to be launched.
+        handler.removeCallbacks(hideNow)
+        handler.postDelayed(hideNow, 800)
       }
 
       override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}

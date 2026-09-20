@@ -34,6 +34,13 @@ class PinRequiredException : CodedException(
   null
 )
 
+class HideUnavailableException : CodedException(
+  "ERR_HIDE_UNAVAILABLE",
+  "Allow notifications for PornFree first. The ongoing notification is the only way back into a " +
+    "hidden app, and hiding without it would lock you out.",
+  null
+)
+
 class PinNotSetException : CodedException(
   "ERR_PIN_NOT_SET",
   "There is no PIN on this device yet",
@@ -298,7 +305,11 @@ class PornFreeVpnModule : Module() {
      */
     AsyncFunction("setLauncherHiddenAsync") { options: HideOptions ->
       requirePin(options.pinHash)
-      LauncherVisibility.setHideLauncher(reactContext, options.hidden)
+      val context = reactContext
+      // Refuse to hide when there is no verified way back in. Twice bitten: hiding without a
+      // reachable notification leaves the app invisible with no way to open it.
+      if (options.hidden && !LauncherVisibility.canHide(context)) throw HideUnavailableException()
+      LauncherVisibility.setHideLauncher(context, options.hidden)
       launcherState()
     }
 
@@ -554,14 +565,7 @@ class PornFreeVpnModule : Module() {
     "logDomains" to config.logDomains
   )
 
-  private fun launcherState(): Map<String, Any> {
-    val context = reactContext
-    return mapOf(
-      "hidden" to LauncherVisibility.isHidden(context),
-      "hideAfterUse" to LauncherVisibility.hideLauncher(context),
-      "secretCode" to LauncherVisibility.SECRET_CODE
-    )
-  }
+  private fun launcherState(): Map<String, Any> = LauncherVisibility.readiness(reactContext)
 
   private fun uninstallState(): Map<String, Any> {
     val context = reactContext

@@ -164,19 +164,25 @@ The last step offers to **hide the app from your launcher**: the icon disappears
 and comes back only while you are using it again. It is on by default because the whole point is to
 stop the app from nagging you, but it is a toggle in **Settings → Visibility** either way.
 
+Hiding is only allowed while **notifications are enabled** for PornFree. That is not a nag: the ongoing
+notification is the reliable way back into a hidden app, and Android does not let anything start a
+disabled launcher activity - not even the app itself. With notifications off, hiding would be a trap,
+so it is refused with an explanation instead.
+
 ### Getting back in when the app is hidden
 
-A disabled launcher icon cannot be started by anything, not even by PornFree itself, so there are two
-deliberate ways back:
-
-| Way in | Notes |
+| Way in | When it works |
 | --- | --- |
-| Tap the ongoing **Protection** notification | Works whenever filtering is running. Keep notifications enabled for the app. |
-| Dial `*#*#7676#*#*` | The fallback for when notifications are switched off. The icon returns and a notification says so. |
+| Tap the ongoing **Protection** notification | Whenever filtering is running, which is the normal case. |
+| Open `pornfree://open` (any browser, bookmark, or QR code) | Always. The vault activity restores the icon and opens the app. |
+| Dial `*#*#7676#*#*` | On dialers that still dispatch secret codes; device dependent. |
+| `adb shell pm enable dev.pornfree.app/dev.pornfree.app.MainActivity` | From a computer with adb and USB debugging. |
+| *Settings → Apps → PornFree → Uninstall* | Always. Reinstalling loses your lists and statistics. |
 
-Both paths also switch hiding *off*, so you can decide again from Settings. If you somehow lose both,
-the app is still under *Settings → Apps*, where uninstalling it restores everything (and loses your
-lists and statistics).
+The first three also switch hiding *off*, so you can decide again from Settings.
+
+If the vault ever fails to open the app, it shows a plain screen with a retry button rather than
+disappearing silently, because a silent failure there means being locked out of your own app.
 
 Optionally set up uninstall protection (**Settings → Uninstall protection**) and a commitment lock
 (**Settings → PIN & commitment**).
@@ -226,7 +232,8 @@ Clearing the app's data resets all of it.
 | Symptom | Fix |
 | --- | --- |
 | Setup will not let me continue | A PIN is required; there is no way past that screen, by design. |
-| The app vanished from my launcher | That is the hiding feature. Open it from the ongoing notification, or dial `*#*#7676#*#*`. |
+| The app vanished from my launcher | That is the hiding feature. Open it from the ongoing notification, or `pornfree://open`, or `*#*#7676#*#*`. |
+| I hid the app and cannot get back in | `adb shell pm enable dev.pornfree.app/dev.pornfree.app.MainActivity`, or open `pornfree://open`, or uninstall and reinstall. |
 | Protection stops after a while | Exclude PornFree from battery optimisation. |
 | A site still loads | Add it to a custom list; check Private DNS is Off/Automatic and browser DoH is disabled. |
 | Some app broke | Add its domain to the allowlist, or switch the resolver preset. |
