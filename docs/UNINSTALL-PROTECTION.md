@@ -17,7 +17,7 @@ otherwise in an app description is describing something that no longer exists:
 - `DevicePolicyManager.setUninstallBlocked()` still exists and still works, but it may only be called
   by a **device owner** or **profile owner**. That status is not something an app can grant itself.
 
-So PornFree offers the one mechanism that is real, and is explicit about its cost: a one-time
+So Quiet offers the one mechanism that is real, and is explicit about its cost: a one-time
 device owner setup over USB, after which the uninstall lock is enforced by Android itself and can
 only be released from inside the app, with your PIN.
 
@@ -25,7 +25,7 @@ only be released from inside the app, with your PIN.
 
 With device owner mode active and the lock on:
 
-- Removing PornFree from the home screen, from Settings, or through the Play Store is refused by
+- Removing Quiet from the home screen, from Settings, or through the Play Store is refused by
   Android while the lock is on.
 - Switching the lock off, releasing device owner mode, or changing always-on VPN all require your PIN
   (verified in native code, not just in the UI).
@@ -33,7 +33,7 @@ With device owner mode active and the lock on:
 - The lock cannot be switched *on* at all until a PIN exists.
 
 Always-on VPN can be enabled at the same time, so filtering comes back by itself after a reboot
-without anyone opening the app. Lockdown mode is never enabled: PornFree only routes DNS, and
+without anyone opening the app. Lockdown mode is never enabled: Quiet only routes DNS, and
 lockdown would cut off everything else.
 
 ## What it does not give you
@@ -69,7 +69,7 @@ jail for the device.
    If adb complains about accounts, remove the remaining ones and try again. Some devices also want
    `--user 0` appended.
 
-5. Back in PornFree: *Settings → Uninstall protection → Check again*, then switch on **Block
+5. Back in Quiet: *Settings → Uninstall protection → Check again*, then switch on **Block
    uninstall** (and **Always-on VPN** if you want filtering to survive a reboot).
 
 ## Removing device owner mode
@@ -87,11 +87,11 @@ Both paths release the uninstall lock and the always-on VPN setting.
 ## Why not profile owner, or a "parental control" API?
 
 - **Profile owner** requires a work profile or a managed device; it is a heavier setup than most
-  people want on a personal phone. PornFree supports it if it is already provisioned, since the
+  people want on a personal phone. Quiet supports it if it is already provisioned, since the
   same lock API applies.
 - **Google Play's parental controls / Google Family Link** are managed by Google's own apps on
   managed accounts. They cannot be wired into a third-party blocker, and they would mean handing the
   filtering decisions to a service rather than to this app.
 - **Accessibility-service tricks** that detect and block the uninstall UI are fragile, are treated as
-  malware behaviour by Play policy, and break the moment the launcher or Settings changes. PornFree
+  malware behaviour by Play policy, and break the moment the launcher or Settings changes. Quiet
   does not do this.

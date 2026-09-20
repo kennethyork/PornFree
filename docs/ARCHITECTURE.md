@@ -1,4 +1,4 @@
-# How PornFree works
+# How Quiet works
 
 ## Why a VPN service at all
 
@@ -8,7 +8,7 @@ Android gives an app three ways to see what other apps are doing on the network:
 2. **A proxy or browser extension** — only covers the app that opts in.
 3. **`VpnService`** — the only mechanism a normal app can use to sit in front of *all* traffic.
 
-PornFree uses the third, but deliberately in the narrowest possible way.
+Quiet uses the third, but deliberately in the narrowest possible way.
 
 ## A tunnel that only carries DNS
 
@@ -16,7 +16,7 @@ Most DNS blockers route `0.0.0.0/0` into their tunnel and then have to implement
 TCP/IP stack to put non-DNS traffic back out on the wire: hundreds of kilobytes of code, extra
 battery drain, and a large attack surface.
 
-PornFree instead adds routes only for the addresses that DNS actually uses:
+Quiet instead adds routes only for the addresses that DNS actually uses:
 
 - the well-known public resolvers (`8.8.8.8`, `1.1.1.1`, the family variants, Quad9, OpenDNS,
   AdGuard, CleanBrowsing, NextDNS, Control D, and the regional resolvers apps hard-code),
@@ -54,7 +54,7 @@ keeps working.
 
 ## Blocking encrypted DNS
 
-Plain DNS filtering is trivially defeated by an app that speaks DoH to its own resolver. PornFree
+Plain DNS filtering is trivially defeated by an app that speaks DoH to its own resolver. Quiet
 handles that in two layers:
 
 1. **Routes.** Resolvers that also serve DoH/DoT are already inside the tunnel. A TLS connection to
@@ -118,3 +118,19 @@ native tunnel applies them. That keeps the fast path free of bridge traffic.
 | `ListStore.kt` | Bundled lists, downloads, atomic rewrites |
 | `Store.kt` | Settings, daily counters, PIN hash, commitment |
 | `PornFreeVpnModule.kt` | The JavaScript API, PIN enforcement, device owner actions |
+
+## Renaming the internal identifiers
+
+The app is called Quiet everywhere a user can see it, but some identifiers still carry the project's
+first name: the `dev.pornfree.app` package, the `expo.modules.pornfreevpn` Kotlin package, the
+`modules/pornfree-vpn` directory, the `PornFreeVpn` JavaScript module, and the keys used for preferences,
+the SQLite database and the signing keystore.
+
+Changing them means touching `android.package` in `app.json`, the module directory and its
+`expo-module.config.json`, the Kotlin `package` lines and `Name("...")`, every import path, the storage
+keys, and the component name in `docs/UNINSTALL-PROTECTION.md`. It also costs every user a fresh install:
+Android treats a new package name as a different app, so the new copy starts with no lists, no PIN and no
+history, and the old copy has to be uninstalled by hand.
+
+They were left alone on purpose - it is churn with no user-visible benefit, and keeping the package name
+is what lets an update install over an existing copy.

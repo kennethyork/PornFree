@@ -1,4 +1,4 @@
-const REPOSITORY = 'https://github.com/kennethyork/PornFree';
+const REPOSITORY = 'https://github.com/kennethyork/Quiet';
 
 /** Places the app links to. Kept in one spot so a fork only has to change this file. */
 export const Links = {

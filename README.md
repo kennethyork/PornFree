@@ -1,8 +1,9 @@
-# PornFree
+# Quiet
 
-An Android-only, open-source porn blocker built with Expo.
-`https://github.com/kennethyork/PornFree` It filters DNS on the device, keeps
-working offline, has no account, no server and no telemetry, and does not care which app is asking.
+An Android-only, open-source porn blocker built with Expo: **https://github.com/kennethyork/Quiet**
+
+It filters DNS on the device, keeps working offline, has no account, no server and no telemetry, and
+does not care which app is asking.
 
 ```
 Shield  →  blocklists + allowlist  →  every DNS lookup on the phone  →  blocked or relayed
@@ -10,7 +11,7 @@ Shield  →  blocklists + allowlist  →  every DNS lookup on the phone  →  bl
 
 ## What it actually does
 
-PornFree runs a local `VpnService` that captures **only DNS**. Android routes the addresses of
+Quiet runs a local `VpnService` that captures **only DNS**. Android routes the addresses of
 public resolvers into the tunnel, so lookups are intercepted no matter which app asks for them or
 whether the app hard-codes `8.8.8.8`. Each query is matched against your blocklists, blocked names
 are answered locally, and everything else is relayed to a family-safe resolver you choose.
@@ -29,16 +30,16 @@ A blocker that overpromises is worse than no blocker, so:
 - **Blocking is by domain name.** A site reached by IP address, or served from a domain no list
   knows yet, gets through. The upstream family resolver is the second line of defence.
 - **Android cannot put a password on the uninstall button.** The uninstall dialog belongs to the OS;
-  no app can intercept it. PornFree's PIN protects everything *inside* the app, and real uninstall
+  no app can intercept it. Quiet's PIN protects everything *inside* the app, and real uninstall
   protection is available through Android's **device owner** mode, which has to be granted once over
   USB. See [docs/UNINSTALL-PROTECTION.md](docs/UNINSTALL-PROTECTION.md).
 - **A custom encrypted-DNS setting bypasses filtering.** If you keep Android's *Private DNS* pointed
-  at a hostname, or a browser's own DoH resolver, lookups can go somewhere PornFree cannot see.
+  at a hostname, or a browser's own DoH resolver, lookups can go somewhere Quiet cannot see.
   Set *Private DNS* to Off/Automatic and turn off "Use secure DNS" in Chrome and Firefox.
-- **Never enable "Block connections without VPN".** PornFree is a DNS filter, not a full tunnel;
+- **Never enable "Block connections without VPN".** Quiet is a DNS filter, not a full tunnel;
   lockdown mode would route all traffic into a tunnel that only understands DNS and take you offline.
 - **Hiding the app is not uninstall protection.** It takes the icon away; Android still lists
-  PornFree under *Settings → Apps*, where it can be removed like anything else. It is a way to stop
+  Quiet under *Settings → Apps*, where it can be removed like anything else. It is a way to stop
   reminding yourself, not a lock.
 - **It is not parental-control software.** Per-app rules, device profiles, remote management and
   tamper-proof installation are out of scope.
@@ -163,33 +164,29 @@ Two consequences worth knowing:
 Setup changes nothing else: after the last step the app behaves like any other app, with its icon in
 your launcher.
 
-### The name on the device
+### The name it shows
 
-The project is called PornFree, but on a phone it presents itself as **Quiet**: that is the launcher
-label, the notification header and the name under *Settings → Apps*. A blocker that announces itself in
-every glimpse of your home screen is easier to switch off in a weak moment than one that quietly sits
-there.
+The app is called **Quiet** everywhere you can see it: the launcher, the notification header, Android's
+VPN entry, and its row under *Settings → Apps*.
 
-The label comes from one place, `expo.name` in `app.json`. Nothing user-visible hardcodes it: the UI
-reads it through `Application.applicationName`, and the native side reads it from
-`PackageManager.getApplicationLabel`, down to the user agent used for blocklist downloads. Renaming the
-app is therefore a one-line change plus `npm run android:release`.
+The name comes from one place, `expo.name` in `app.json`, and nothing user-visible hardcodes it: the UI
+reads it through `Application.applicationName`, native code through `loadLabel`, down to the user agent
+sent when fetching blocklists. Renaming the app is a one-line change plus `npm run android:release`.
 
-What a label does not hide, because Android decides it:
+What a name cannot change, because Android decides it:
 
-| Still visible | Where |
+| Still says `pornfree` | Where |
 | --- | --- |
-| `dev.pornfree.app` | *Settings → Apps → App info → Advanced*, and any package inspector |
-| The GitHub link in *Settings → About* | inside the app |
-| Nothing else | the notification, the VPN entry and the app list all use the label |
+| `dev.pornfree.app` | *Settings → Apps → App info → Advanced*, and the device owner command in `docs/UNINSTALL-PROTECTION.md` |
+| Kotlin package, module directory, preference and database keys | inside the APK and its app data |
+| `expo.slug` | the EAS project this repository was first linked to |
 
-Deeper discretion means changing `android.package` in `app.json` as well (that is a fresh install, and
-`docs/UNINSTALL-PROTECTION.md` has the component name to update) and pointing `src/lib/links.ts` at your
-own fork.
+Those are deliberate: keeping them means an update installs over an existing copy and the documented adb
+command keeps working. Changing them is a fresh install - see the end of `docs/ARCHITECTURE.md`.
 
 ### Hiding the icon
 
-Hiding is opt-in, under **Settings → Visibility**. When it is on, PornFree has no launcher icon: not on
+Hiding is opt-in, under **Settings → Visibility**. When it is on, Quiet has no launcher icon: not on
 your home screen, not in the app drawer, and no reminder every time you swipe past. Turn it off from
 that same screen, or from any of the ways back in below.
 
@@ -200,7 +197,7 @@ activity* is switched off cannot be started by anything at all - not by its own 
 deep link, not even by adb. The first version of this feature did that and locked people out of their
 own app, which is also why the alias exists rather than a plain "disable the icon" toggle.
 
-Hiding is only allowed while **notifications are enabled** for PornFree, because the ongoing
+Hiding is only allowed while **notifications are enabled** for Quiet, because the ongoing
 notification is how most people get back. With notifications off, hiding would be a trap, so it is
 refused with an explanation instead.
 
@@ -210,10 +207,10 @@ refused with an explanation instead.
 | --- | --- |
 | Tap the ongoing **Protection** notification | Whenever filtering is running, which is the normal case. |
 | Open `pornfree://open` (any browser, bookmark, or QR code) | Always. |
-| **Recents** - swipe up and pick PornFree | Whenever it is still in the recent-tasks list. |
+| **Recents** - swipe up and pick Quiet | Whenever it is still in the recent-tasks list. |
 | Dial `*#*#7676#*#*` | On dialers that still dispatch secret codes; device dependent. Also brings the icon back. |
 | `adb shell am start -n dev.pornfree.app/.MainActivity` | From a computer with adb and USB debugging. |
-| *Settings → Apps → PornFree → Uninstall* | Always. Reinstalling loses your lists and statistics. |
+| *Settings → Apps → Quiet → Uninstall* | Always. Reinstalling loses your lists and statistics. |
 
 Inside the app, **Settings → Visibility** switches hiding off again, as does the secret code.
 
@@ -270,7 +267,7 @@ Clearing the app's data resets all of it.
 | Setup will not let me continue | A PIN is required; there is no way past that screen, by design. |
 | The app vanished from my launcher | That is the hiding feature. Open it from the ongoing notification, `pornfree://open`, Recents, or `*#*#7676#*#*`. |
 | I hid the app and cannot get back in | `adb shell am start -n dev.pornfree.app/.MainActivity`, or `pornfree://open`, or uninstall and reinstall. Settings → Apps always lists it. |
-| Protection stops after a while | Exclude PornFree from battery optimisation. |
+| Protection stops after a while | Exclude Quiet from battery optimisation. |
 | A site still loads | Add it to a custom list; check Private DNS is Off/Automatic and browser DoH is disabled. |
 | Some app broke | Add its domain to the allowlist, or switch the resolver preset. |
 | Nothing loads at all | Turn off "Block connections without VPN" in the system VPN settings. |
@@ -279,13 +276,13 @@ Clearing the app's data resets all of it.
 ## Contributing
 
 ```sh
-git clone https://github.com/kennethyork/PornFree.git
-cd PornFree
+git clone https://github.com/kennethyork/Quiet.git
+cd Quiet
 npm install
 npx expo run:android
 ```
 
-Issues and pull requests are welcome at <https://github.com/kennethyork/PornFree>. Please keep the
+Issues and pull requests are welcome at <https://github.com/kennethyork/Quiet>. Please keep the
 promises honest: if a change makes the app claim protection it cannot deliver, it will not be
 merged.
 

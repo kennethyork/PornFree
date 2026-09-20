@@ -8,4 +8,4 @@ import * as Application from 'expo-application';
  * one-line change in `app.json` (expo.name) instead of a hunt through the UI. Nothing user-visible
  * should hardcode the project's name.
  */
-export const APP_NAME = Application.applicationName ?? 'PornFree';
+export const APP_NAME = Application.applicationName ?? 'Quiet';

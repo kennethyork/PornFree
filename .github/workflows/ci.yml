@@ -54,6 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.collect.outputs.version }}
+      label: ${{ steps.collect.outputs.label }}
     env:
       ANDROID_HOME: /usr/local/lib/android/sdk
     steps:
@@ -104,15 +105,19 @@ jobs:
         id: collect
         run: |
           version=$(node -p "require('./app.json').expo.version")
+          # The file name follows the app's own label: what you see in your downloads should match
+          # what you see in your launcher, not the name of the repository.
+          label=$(node -p "require('./app.json').expo.name")
           mkdir -p dist
-          cp android/app/build/outputs/apk/release/app-release.apk "dist/PornFree-${version}.apk"
+          cp android/app/build/outputs/apk/release/app-release.apk "dist/${label}-${version}.apk"
           echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "label=$label" >> "$GITHUB_OUTPUT"
           ls -lh dist
 
       - name: Upload the APK
         uses: actions/upload-artifact@v4
         with:
-          name: PornFree-${{ steps.collect.outputs.version }}
+          name: ${{ steps.collect.outputs.label }}-${{ steps.collect.outputs.version }}
           path: dist/*.apk
           if-no-files-found: error
           retention-days: 90
@@ -120,12 +125,13 @@ jobs:
       - name: Summary
         run: |
           {
-            echo "### PornFree ${{ steps.collect.outputs.version }} APK"
+            echo "### ${{ steps.collect.outputs.label }} ${{ steps.collect.outputs.version }} APK"
             echo ""
             echo "Download it from the **Artifacts** section at the bottom of this run page."
             echo ""
             echo "| | |"
             echo "| --- | --- |"
+            echo "| File | \`${{ steps.collect.outputs.label }}-${{ steps.collect.outputs.version }}.apk\` |"
             echo "| Package | \`dev.pornfree.app\` |"
             echo "| Architectures | arm64-v8a, armeabi-v7a (every real phone) |"
             echo "| Signed with | ${{ steps.keystore.outputs.signing }} |"
@@ -145,7 +151,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: PornFree-${{ needs.apk.outputs.version }}
+          name: ${{ needs.apk.outputs.label }}-${{ needs.apk.outputs.version }}
           path: dist
 
       - name: Publish the release
@@ -154,6 +160,10 @@ jobs:
         run: |
           cat > NOTES.md <<'NOTES'
           ### Install
+
+          The app is called **Quiet** in the launcher, in notifications and under Settings > Apps. Its
+          package name is still `dev.pornfree.app`, which is what Android and the device owner command
+          refer to.
 
           Copy the APK to an Android phone (Android 7 or newer) and open it. Tap the shield, allow the
           VPN connection Android offers you, and set your PIN when asked.
@@ -176,5 +186,5 @@ jobs:
           NOTES
           gh release create "${GITHUB_REF_NAME}" dist/*.apk \
             --repo "${GITHUB_REPOSITORY}" \
-            --title "PornFree ${GITHUB_REF_NAME#v}" \
+            --title "${{ needs.apk.outputs.label }} ${GITHUB_REF_NAME#v}" \
             --notes-file NOTES.md
