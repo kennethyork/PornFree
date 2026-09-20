@@ -2,11 +2,12 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Application from 'expo-application';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import Native from '../../modules/blockporna-vpn';
-import type { BlockMode, UninstallState } from '../../modules/blockporna-vpn';
+import Native from '../../modules/pornfree-vpn';
+import type { BlockMode, UninstallState } from '../../modules/pornfree-vpn';
 import { Card, Chevron, Pill, SettingRow, ToggleRow, styles as ui } from '../../src/components/ui';
+import { Links } from '../../src/lib/links';
 import { RESOLVER_PRESETS, resolverPresetFor } from '../../src/lib/lists';
 import { useProtection } from '../../src/state/protection';
 import { useSecurity } from '../../src/state/security';
@@ -223,7 +224,7 @@ export default function SettingsScreen() {
       <Text style={ui.sectionTitle}>About</Text>
       <Card>
         <SettingRow
-          title="BlockPorna"
+          title="PornFree"
           subtitle={`Version ${Application.nativeApplicationVersion ?? '1.0.0'} · GPL-3.0 · Android only`}
         />
         <View style={styles.divider} />
@@ -239,6 +240,27 @@ export default function SettingsScreen() {
         <SettingRow
           title="Statistics"
           subtitle={status ? `${status.totalBlocked.toLocaleString('en-US')} lookups blocked on this device` : '—'}
+        />
+        <View style={styles.divider} />
+        <SettingRow
+          title="How filtering works"
+          subtitle="The architecture notes in the repository explain the tunnel, the matching and the limits."
+          onPress={() => void Linking.openURL(Links.architecture)}
+          right={<Chevron />}
+        />
+        <View style={styles.divider} />
+        <SettingRow
+          title="Source code"
+          subtitle="github.com/kennethyork/PornFree · GPL-3.0"
+          onPress={() => void Linking.openURL(Links.repository)}
+          right={<Chevron />}
+        />
+        <View style={styles.divider} />
+        <SettingRow
+          title="Report a bug"
+          subtitle="A missed site, a broken app, anything else."
+          onPress={() => void Linking.openURL(Links.issues)}
+          right={<Chevron />}
         />
       </Card>
     </ScrollView>

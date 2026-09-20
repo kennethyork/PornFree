@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import type { DailyStats } from '../../modules/blockporna-vpn';
+import type { DailyStats } from '../../modules/pornfree-vpn';
 import { formatCompact, weekdayLabel } from '../lib/format';
 import { colors, radius, space } from '../theme';
 

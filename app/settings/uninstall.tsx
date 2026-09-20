@@ -2,17 +2,18 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import Native from '../../modules/blockporna-vpn';
-import type { UninstallState } from '../../modules/blockporna-vpn';
+import Native from '../../modules/pornfree-vpn';
+import type { UninstallState } from '../../modules/pornfree-vpn';
 import { Button, Card, Pill, SettingRow, ToggleRow, styles as ui } from '../../src/components/ui';
+import { Links } from '../../src/lib/links';
 import { useProtection } from '../../src/state/protection';
 import { useSecurity } from '../../src/state/security';
 import { colors, radius, space } from '../../src/theme';
 
 const FALLBACK_COMPONENT =
-  'dev.blockporna.app/expo.modules.blockpornavpn.BlockPornaDeviceAdminReceiver';
+  'dev.pornfree.app/expo.modules.pornfreevpn.PornFreeDeviceAdminReceiver';
 
 function errorMessage(failure: unknown): string {
   if (failure && typeof failure === 'object' && 'message' in failure) {
@@ -108,7 +109,7 @@ export default function UninstallProtectionScreen() {
   const releaseDeviceOwner = useCallback(() => {
     Alert.alert(
       'Turn off device owner mode?',
-      'This releases the uninstall lock and the always-on VPN setting. BlockPorna keeps filtering, but the app can then be removed like any other.',
+      'This releases the uninstall lock and the always-on VPN setting. PornFree keeps filtering, but the app can then be removed like any other.',
       [
         { text: 'Keep it', style: 'cancel' },
         {
@@ -150,8 +151,8 @@ export default function UninstallProtectionScreen() {
           </Text>
           <Text style={styles.statusBody}>
             {locked
-              ? 'Android will refuse to remove BlockPorna. Turning this off, or releasing device owner mode, asks for your PIN first.'
-              : 'BlockPorna can currently be removed like any other app.'}
+              ? 'Android will refuse to remove PornFree. Turning this off, or releasing device owner mode, asks for your PIN first.'
+              : 'PornFree can currently be removed like any other app.'}
           </Text>
         </View>
       </Card>
@@ -200,7 +201,7 @@ export default function UninstallProtectionScreen() {
         <Card>
           <SettingRow
             title="Device owner"
-            subtitle="BlockPorna owns this device's policy, so it can lock its own removal."
+            subtitle="PornFree owns this device's policy, so it can lock its own removal."
             right={<Pill label="Active" tone="success" />}
           />
           <View style={styles.divider} />
@@ -284,6 +285,13 @@ export default function UninstallProtectionScreen() {
           <Bullet text="Factory reset the phone, which also erases everything else." />
         </View>
       </Card>
+
+      <Button
+        title="Read the full guide"
+        variant="ghost"
+        icon="book-outline"
+        onPress={() => void Linking.openURL(Links.uninstallProtection)}
+      />
 
       <Text style={styles.footnote}>
         Removing the app removes the VPN and the lists with it. Nothing is stored in the cloud, so

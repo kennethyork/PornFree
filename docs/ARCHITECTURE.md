@@ -1,4 +1,4 @@
-# How BlockPorna works
+# How PornFree works
 
 ## Why a VPN service at all
 
@@ -8,7 +8,7 @@ Android gives an app three ways to see what other apps are doing on the network:
 2. **A proxy or browser extension** — only covers the app that opts in.
 3. **`VpnService`** — the only mechanism a normal app can use to sit in front of *all* traffic.
 
-BlockPorna uses the third, but deliberately in the narrowest possible way.
+PornFree uses the third, but deliberately in the narrowest possible way.
 
 ## A tunnel that only carries DNS
 
@@ -16,7 +16,7 @@ Most DNS blockers route `0.0.0.0/0` into their tunnel and then have to implement
 TCP/IP stack to put non-DNS traffic back out on the wire: hundreds of kilobytes of code, extra
 battery drain, and a large attack surface.
 
-BlockPorna instead adds routes only for the addresses that DNS actually uses:
+PornFree instead adds routes only for the addresses that DNS actually uses:
 
 - the well-known public resolvers (`8.8.8.8`, `1.1.1.1`, the family variants, Quad9, OpenDNS,
   AdGuard, CleanBrowsing, NextDNS, Control D, and the regional resolvers apps hard-code),
@@ -54,7 +54,7 @@ keeps working.
 
 ## Blocking encrypted DNS
 
-Plain DNS filtering is trivially defeated by an app that speaks DoH to its own resolver. BlockPorna
+Plain DNS filtering is trivially defeated by an app that speaks DoH to its own resolver. PornFree
 handles that in two layers:
 
 1. **Routes.** Resolvers that also serve DoH/DoT are already inside the tunnel. A TLS connection to
@@ -110,11 +110,11 @@ native tunnel applies them. That keeps the fast path free of bridge traffic.
 
 | File | Responsibility |
 | --- | --- |
-| `BlockPornaVpnService.kt` | Tunnel lifecycle, packet loop, DNS relay, cache, counters |
+| `PornFreeVpnService.kt` | Tunnel lifecycle, packet loop, DNS relay, cache, counters |
 | `DnsWire.kt` | Question parsing, synthesised answers, EDNS clamping |
 | `IpWire.kt` | IPv4/IPv6/UDP/ICMP parsing and reply construction with checksums |
 | `DomainRules.kt` | List parsing, normalisation, suffix matching |
 | `NetworkConstants.kt` | Which addresses get routed into the tunnel |
 | `ListStore.kt` | Bundled lists, downloads, atomic rewrites |
 | `Store.kt` | Settings, daily counters, PIN hash, commitment |
-| `BlockPornaVpnModule.kt` | The JavaScript API, PIN enforcement, device owner actions |
+| `PornFreeVpnModule.kt` | The JavaScript API, PIN enforcement, device owner actions |

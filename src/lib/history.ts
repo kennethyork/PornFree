@@ -8,7 +8,7 @@ let database: Promise<SQLite.SQLiteDatabase> | null = null;
 function open(): Promise<SQLite.SQLiteDatabase> {
   if (!database) {
     database = (async () => {
-      const db = await SQLite.openDatabaseAsync('blockporna.db');
+      const db = await SQLite.openDatabaseAsync('pornfree.db');
       await db.execAsync(`
         PRAGMA journal_mode = WAL;
         CREATE TABLE IF NOT EXISTS blocked_events (

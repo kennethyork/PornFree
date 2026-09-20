@@ -10,13 +10,13 @@ import {
 } from 'react';
 import { PermissionsAndroid, Platform } from 'react-native';
 
-import Native from '../../modules/blockporna-vpn';
+import Native from '../../modules/pornfree-vpn';
 import type {
   BlocklistInfo,
   BlockedDomainEvent,
   ProtectionConfig,
   ProtectionStatus,
-} from '../../modules/blockporna-vpn';
+} from '../../modules/pornfree-vpn';
 import { pruneHistory, recordBlocked } from '../lib/history';
 
 type ProtectionValue = {

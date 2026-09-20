@@ -36,7 +36,7 @@ jobs:
         run: npx expo prebuild -p android
 
       - name: Unit tests
-        run: cd android && ./gradlew :blockporna-vpn:testDebugUnitTest
+        run: cd android && ./gradlew :pornfree-vpn:testDebugUnitTest
 
       - name: Build the APK
         run: cd android && ./gradlew :app:assembleDebug

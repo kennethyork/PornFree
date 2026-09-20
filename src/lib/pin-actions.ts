@@ -1,4 +1,4 @@
-import Native from '../../modules/blockporna-vpn';
+import Native from '../../modules/pornfree-vpn';
 import { dropSalt } from './pin';
 
 /** Removes the PIN. The verified hash of the current PIN must be supplied. */

@@ -9,7 +9,7 @@ import {
   type ReactNode,
 } from 'react';
 
-import Native from '../../modules/blockporna-vpn';
+import Native from '../../modules/pornfree-vpn';
 import { PinSheet } from '../components/pin-sheet';
 import { isOnboarded, setOnboarded } from '../lib/onboarding';
 import { hashPin, isValidPin } from '../lib/pin';

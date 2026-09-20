@@ -1,7 +1,7 @@
 import * as Crypto from 'expo-crypto';
 import * as SecureStore from 'expo-secure-store';
 
-const SALT_KEY = 'blockporna.pin.salt';
+const SALT_KEY = 'pornfree.pin.salt';
 const PIN_PATTERN = /^\d{4,8}$/;
 
 export function isValidPin(pin: string): boolean {

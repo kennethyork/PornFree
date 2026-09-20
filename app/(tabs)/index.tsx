@@ -53,7 +53,7 @@ export default function ShieldScreen() {
   if (!ready || !status) {
     return (
       <View style={styles.loading}>
-        <Text style={styles.splashTitle}>BlockPorna</Text>
+        <Text style={styles.splashTitle}>PornFree</Text>
         <Text style={styles.splashText}>Starting protection…</Text>
       </View>
     );
@@ -68,7 +68,7 @@ export default function ShieldScreen() {
       contentContainerStyle={[styles.content, { paddingTop: insets.top + space(4) }]}
     >
       <View style={styles.brandRow}>
-        <Text style={styles.brand}>BlockPorna</Text>
+        <Text style={styles.brand}>PornFree</Text>
         <Pill
           label={active ? 'Filtering' : 'Off'}
           tone={active ? 'success' : 'neutral'}
@@ -86,7 +86,7 @@ export default function ShieldScreen() {
         <Card style={styles.warnCard}>
           <Text style={styles.warnTitle}>Android needs your permission first</Text>
           <Text style={styles.warnText}>
-            BlockPorna filters by running a local VPN that only handles DNS. Android will show a
+            PornFree filters by running a local VPN that only handles DNS. Android will show a
             one-time consent dialog.
           </Text>
           <Button title="Grant permission" onPress={() => void requestPermission()} icon="key" />
@@ -156,7 +156,7 @@ export default function ShieldScreen() {
       </Card>
 
       <Text style={styles.footnote}>
-        BlockPorna filters DNS lookups for porn and adult domains. It never sees the contents of your
+        PornFree filters DNS lookups for porn and adult domains. It never sees the contents of your
         traffic, and nothing leaves the device except the DNS queries themselves.
       </Text>
     </ScrollView>

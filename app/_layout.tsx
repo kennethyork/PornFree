@@ -20,7 +20,7 @@ function ProtectionGate({ children }: { children: ReactNode }) {
     return (
       <View style={styles.boot}>
         <ActivityIndicator color={colors.accent} />
-        <Text style={styles.bootText}>Starting BlockPorna…</Text>
+        <Text style={styles.bootText}>Starting PornFree…</Text>
       </View>
     );
   }
