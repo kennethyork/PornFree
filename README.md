@@ -37,6 +37,9 @@ A blocker that overpromises is worse than no blocker, so:
   Set *Private DNS* to Off/Automatic and turn off "Use secure DNS" in Chrome and Firefox.
 - **Never enable "Block connections without VPN".** PornFree is a DNS filter, not a full tunnel;
   lockdown mode would route all traffic into a tunnel that only understands DNS and take you offline.
+- **Hiding the app is not uninstall protection.** It takes the icon away; Android still lists
+  PornFree under *Settings → Apps*, where it can be removed like anything else. It is a way to stop
+  reminding yourself, not a lock.
 - **It is not parental-control software.** Per-app rules, device profiles, remote management and
   tamper-proof installation are out of scope.
 
@@ -54,6 +57,7 @@ A blocker that overpromises is worse than no blocker, so:
 - Commitment lock: protection refuses to be switched off until a timer you set runs out
 - Stats: per-day chart, top blocked domains, session and lifetime counters
 - Restarts itself after a reboot when the VPN permission is still granted
+- Hide the app from your launcher once setup is done, so the icon stops reminding you it exists
 - Optional device-owner mode: uninstall lock plus always-on VPN
 - No analytics, no accounts, no network calls other than DNS and list downloads
 
@@ -156,6 +160,24 @@ Two consequences worth knowing:
 - Reaching the end of setup does not require starting protection: choosing *Not now* leaves the PIN
   in place and the app usable, with the shield ready when you want it.
 
+The last step offers to **hide the app from your launcher**: the icon disappears as soon as you leave,
+and comes back only while you are using it again. It is on by default because the whole point is to
+stop the app from nagging you, but it is a toggle in **Settings → Visibility** either way.
+
+### Getting back in when the app is hidden
+
+A disabled launcher icon cannot be started by anything, not even by PornFree itself, so there are two
+deliberate ways back:
+
+| Way in | Notes |
+| --- | --- |
+| Tap the ongoing **Protection** notification | Works whenever filtering is running. Keep notifications enabled for the app. |
+| Dial `*#*#7676#*#*` | The fallback for when notifications are switched off. The icon returns and a notification says so. |
+
+Both paths also switch hiding *off*, so you can decide again from Settings. If you somehow lose both,
+the app is still under *Settings → Apps*, where uninstalling it restores everything (and loses your
+lists and statistics).
+
 Optionally set up uninstall protection (**Settings → Uninstall protection**) and a commitment lock
 (**Settings → PIN & commitment**).
 
@@ -204,6 +226,7 @@ Clearing the app's data resets all of it.
 | Symptom | Fix |
 | --- | --- |
 | Setup will not let me continue | A PIN is required; there is no way past that screen, by design. |
+| The app vanished from my launcher | That is the hiding feature. Open it from the ongoing notification, or dial `*#*#7676#*#*`. |
 | Protection stops after a while | Exclude PornFree from battery optimisation. |
 | A site still loads | Add it to a custom list; check Private DNS is Off/Automatic and browser DoH is disabled. |
 | Some app broke | Add its domain to the allowlist, or switch the resolver preset. |

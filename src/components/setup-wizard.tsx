@@ -3,10 +3,11 @@ import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import Native from '../../modules/pornfree-vpn';
 import { useProtection } from '../state/protection';
 import { useSecurity } from '../state/security';
 import { colors, radius, space } from '../theme';
-import { Button, Card } from './ui';
+import { Button, Card, ToggleRow } from './ui';
 
 type Phase = 'welcome' | 'working';
 
@@ -23,6 +24,8 @@ export function SetupWizard() {
   const { status, start, requestPermission, error, dismissError, busy } = useProtection();
   // Someone who removed their PIN goes straight to choosing a new one.
   const [phase, setPhase] = useState<Phase>(onboarded ? 'working' : 'welcome');
+  const [hideAfterSetup, setHideAfterSetup] = useState(true);
+  const [finishing, setFinishing] = useState(false);
 
   const stage: 'welcome' | 'pin' | 'start' | 'done' =
     phase === 'welcome' ? 'welcome' : !hasPin ? 'pin' : status?.running ? 'done' : 'start';
@@ -34,6 +37,23 @@ export function SetupWizard() {
       'This PIN guards everything in PornFree. Write it down somewhere you can find it again: there is no way to recover it.',
       'create'
     );
+  };
+
+  const hideTheApp = async () => {
+    const pin = await acquirePin('Hiding the app needs your PIN.');
+    if (pin === null && hasPin) return false;
+    await Native.setLauncherHiddenAsync({ hidden: true, pinHash: pin });
+    return true;
+  };
+
+  const finish = async () => {
+    setFinishing(true);
+    try {
+      if (hideAfterSetup) await hideTheApp();
+      await completeOnboarding();
+    } finally {
+      setFinishing(false);
+    }
   };
 
   const enable = async () => {
@@ -155,11 +175,22 @@ export function SetupWizard() {
           <Text style={styles.body}>
             Filtering is running and your PIN is set. Two things worth doing now:
           </Text>
+          <ToggleRow
+            title="Hide PornFree from my launcher"
+            subtitle="The icon disappears as soon as you leave the app, so you are not reminded of it. Open it again by tapping the ongoing notification, or by dialling the code in Settings. Android still lists it under Settings → Apps, where it can be uninstalled."
+            value={hideAfterSetup}
+            onValueChange={setHideAfterSetup}
+          />
           <View style={styles.bullets}>
-            <Bullet icon="lock-closed" text="Settings → Uninstall protection, if you want the app to resist being removed." />
             <Bullet icon="hourglass-outline" text="Settings → PIN & commitment, if you want a lock that refuses to switch filtering off." />
+            <Bullet icon="notifications-outline" text="Keep notifications on for PornFree: the ongoing one is how you open a hidden app." />
           </View>
-          <Button title="Finish" icon="checkmark" onPress={() => void completeOnboarding()} />
+          <Button
+            title="Finish"
+            icon="checkmark"
+            loading={finishing}
+            onPress={() => void finish()}
+          />
         </Card>
       ) : null}
     </ScrollView>

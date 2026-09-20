@@ -2,10 +2,10 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Application from 'expo-application';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import Native from '../../modules/pornfree-vpn';
-import type { BlockMode, UninstallState } from '../../modules/pornfree-vpn';
+import type { BlockMode, LauncherState, UninstallState } from '../../modules/pornfree-vpn';
 import { Card, Chevron, Pill, SettingRow, ToggleRow, styles as ui } from '../../src/components/ui';
 import { Links } from '../../src/lib/links';
 import { RESOLVER_PRESETS, resolverPresetFor } from '../../src/lib/lists';
@@ -64,6 +64,7 @@ export default function SettingsScreen() {
   const { acquirePin, hasPin, refresh: refreshSecurity } = useSecurity();
   const router = useRouter();
   const [uninstall, setUninstall] = useState<UninstallState | null>(null);
+  const [launcher, setLauncher] = useState<LauncherState | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -71,8 +72,32 @@ export default function SettingsScreen() {
     } catch {
       setUninstall(null);
     }
+    try {
+      setLauncher(await Native.getLauncherStateAsync());
+    } catch {
+      setLauncher(null);
+    }
     await refreshSecurity();
   }, [refreshSecurity]);
+
+  const setHidden = useCallback(
+    (hidden: boolean) => {
+      void (async () => {
+        const pin = await acquirePin(
+          hidden
+            ? 'Hiding the app needs your PIN.'
+            : 'Bringing the icon back needs your PIN.'
+        );
+        if (pin === null && hasPin) return;
+        try {
+          setLauncher(await Native.setLauncherHiddenAsync({ hidden, pinHash: pin }));
+        } catch (failure) {
+          Alert.alert('Could not change launcher visibility', (failure as Error).message);
+        }
+      })();
+    },
+    [acquirePin, hasPin]
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -182,6 +207,22 @@ export default function SettingsScreen() {
           onValueChange={(next) =>
             change('The log is what makes your progress visible.', { logDomains: next })
           }
+        />
+      </Card>
+
+      <Text style={ui.sectionTitle}>Visibility</Text>
+      <Card>
+        <ToggleRow
+          title="Hide from the launcher"
+          subtitle={
+            launcher?.hidden
+              ? 'The icon is hidden right now. Open the app from the ongoing notification, or dial ' +
+                `*#*#${launcher?.secretCode ?? '7676'}#*#* to bring it back.`
+              : 'The icon disappears as soon as you leave the app. This is not uninstall protection: Android still lists PornFree under Settings → Apps, where it can be removed.'
+          }
+          value={launcher?.hideAfterUse ?? false}
+          disabled={busy || !launcher}
+          onValueChange={setHidden}
         />
       </Card>
 

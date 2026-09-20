@@ -45,6 +45,8 @@ export type ProtectionStatus = {
   installedAt: number;
   /** True when the user wants protection on, even if the tunnel is momentarily down. */
   shouldRun: boolean;
+  /** True while the app has no launcher icon. */
+  launcherHidden: boolean;
 };
 
 export type BlocklistInfo = {
@@ -74,6 +76,21 @@ export type UninstallState = {
   hasPin: boolean;
   packageName: string;
   adminComponent: string;
+};
+
+/**
+ * Whether the app keeps itself out of the launcher.
+ *
+ * This is not uninstall protection: Android still lists the app under Settings > Apps, where it can
+ * be removed. It only takes away the icon and the reminders that come with it.
+ */
+export type LauncherState = {
+  /** Whether the icon is hidden right now, which is only true while the app is not in use. */
+  hidden: boolean;
+  /** Whether the user asked for the app to hide itself. */
+  hideAfterUse: boolean;
+  /** Dial `*#*#<secretCode>#*#*` to bring the icon back without a notification to tap. */
+  secretCode: string;
 };
 
 export type BlockedDomainEvent = {

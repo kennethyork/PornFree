@@ -1,5 +1,10 @@
 # Uninstall protection
 
+> **Looking for the simpler thing?** If all you want is for the app to stop catching your eye, you do
+> not need any of this: turn on **Settings → Visibility → Hide from the launcher**. It hides the icon
+> and needs no adb, no device owner and no computer. What it does *not* do is stop an uninstall -
+> that is what the rest of this document is about.
+
 ## The short version
 
 **Android does not let an app ask for a password when it is uninstalled.** The uninstall flow belongs

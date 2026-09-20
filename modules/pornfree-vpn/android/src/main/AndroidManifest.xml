@@ -45,6 +45,29 @@
       </intent-filter>
     </receiver>
 
+    <!--
+      Way back in while the app is hidden from the launcher. The ongoing notification opens this,
+      which restores the icon before handing over to the UI.
+    -->
+    <activity
+      android:name="expo.modules.pornfreevpn.VaultActivity"
+      android:excludeFromRecents="true"
+      android:exported="false"
+      android:noHistory="true"
+      android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+    <!-- Dial *#*#7676#*#* to bring the icon back when notifications are unavailable. -->
+    <receiver
+      android:name="expo.modules.pornfreevpn.SecretCodeReceiver"
+      android:exported="true">
+      <intent-filter>
+        <action android:name="android.provider.Telephony.SECRET_CODE" />
+        <data
+          android:host="7676"
+          android:scheme="android_secret_code" />
+      </intent-filter>
+    </receiver>
+
     <!-- Only used when the app is provisioned as device owner or profile owner. -->
     <receiver
       android:name="expo.modules.pornfreevpn.PornFreeDeviceAdminReceiver"

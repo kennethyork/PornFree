@@ -1,7 +1,6 @@
 package expo.modules.pornfreevpn
 
 import android.app.Notification
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
@@ -104,6 +103,12 @@ class PornFreeVpnService : VpnService() {
   private val v6Socket = ThreadLocal.withInitial { protectedSocket(true) }
   private var persistedBlocked = 0L
   private var persistedAllowed = 0L
+
+  override fun onCreate() {
+    super.onCreate()
+    // The tunnel outlives the UI, so it also keeps the launcher icon hidden between visits.
+    LauncherVisibility.registerAutoHide(this)
+  }
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     when (intent?.action) {
@@ -507,19 +512,7 @@ class PornFreeVpnService : VpnService() {
     upstreams = emptyList()
   }
 
-  private fun ensureChannel() {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
-    val manager = getSystemService(NotificationManager::class.java) ?: return
-    if (manager.getNotificationChannel(CHANNEL_ID) != null) return
-    val channel = NotificationChannel(
-      CHANNEL_ID,
-      "Protection",
-      NotificationManager.IMPORTANCE_LOW
-    )
-    channel.description = "Shows whether PornFree is filtering DNS"
-    channel.setShowBadge(false)
-    manager.createNotificationChannel(channel)
-  }
+  private fun ensureChannel() = Notices.ensureChannel(this)
 
   private fun buildNotification(): Notification {
     val total = Store.totalBlocked(this) + VpnRuntime.blockedSession.get()
@@ -539,12 +532,12 @@ class PornFreeVpnService : VpnService() {
       .setShowWhen(false)
       .setSmallIcon(if (applicationInfo.icon != 0) applicationInfo.icon else android.R.drawable.stat_sys_warning)
 
-    val launch = packageManager.getLaunchIntentForPackage(packageName)
-    if (launch != null) {
-      var flags = PendingIntent.FLAG_UPDATE_CURRENT
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) flags = flags or PendingIntent.FLAG_IMMUTABLE
-      builder.setContentIntent(PendingIntent.getActivity(this, 0, launch, flags))
-    }
+    // Tap target is the vault rather than the UI: while the app is hidden from the launcher its
+    // main activity cannot be started by anyone, and the vault restores the icon first.
+    var flags = PendingIntent.FLAG_UPDATE_CURRENT
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) flags = flags or PendingIntent.FLAG_IMMUTABLE
+    val open = Intent(this, VaultActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    builder.setContentIntent(PendingIntent.getActivity(this, 0, open, flags))
     return builder.build()
   }
 

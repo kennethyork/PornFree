@@ -27,6 +27,9 @@
 - A PIN is mandatory. `startAsync` refuses to run without one, removing the PIN stops the tunnel and
   releases the uninstall lock, and the setup wizard is a gate rather than a suggestion. Never add a
   path that leaves the app filtering without a PIN in place.
+- Hiding the launcher icon (`LauncherVisibility`) must always keep two working ways back in: the
+  ongoing notification through `VaultActivity`, and the `*#*#7676#*#*` secret code. A disabled
+  launcher activity cannot be started by anything, so never hide the icon without both.
 
 ## Verify before claiming done
 

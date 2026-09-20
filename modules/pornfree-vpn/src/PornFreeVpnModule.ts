@@ -4,6 +4,7 @@ import type {
   BlocklistInfo,
   PornFreeVpnModuleEvents,
   DailyStats,
+  LauncherState,
   ProtectionConfig,
   ProtectionStatus,
   UninstallState,
@@ -31,6 +32,11 @@ declare class PornFreeVpnModule extends NativeModule<PornFreeVpnModuleEvents> {
   verifyPinAsync(hash: string): Promise<boolean>;
   setCommitmentAsync(options: { hours: number; pinHash?: string | null }): Promise<ProtectionStatus>;
   isDeviceOwnerAsync(): Promise<boolean>;
+  getLauncherStateAsync(): Promise<LauncherState>;
+  setLauncherHiddenAsync(options: {
+    hidden: boolean;
+    pinHash?: string | null;
+  }): Promise<LauncherState>;
   getUninstallStateAsync(): Promise<UninstallState>;
   setUninstallBlockedAsync(options: {
     blocked: boolean;

@@ -87,6 +87,11 @@ class EnableOptions : Record {
   @Field val pinHash: String? = null
 }
 
+class HideOptions : Record {
+  @Field val hidden: Boolean = false
+  @Field val pinHash: String? = null
+}
+
 class PornFreeVpnModule : Module() {
   private val handler = Handler(Looper.getMainLooper())
   private var observing = false
@@ -111,6 +116,12 @@ class PornFreeVpnModule : Module() {
     Name("PornFreeVpn")
 
     Events("onStats", "onBlocked", "onStateChange")
+
+    OnCreate {
+      // Hiding the launcher icon is re-applied when the app is left, which needs the application
+      // rather than any particular activity.
+      appContext.reactContext?.let { LauncherVisibility.registerAutoHide(it) }
+    }
 
     OnStartObserving {
       observing = true
@@ -273,6 +284,22 @@ class PornFreeVpnModule : Module() {
 
     AsyncFunction("getUninstallStateAsync") {
       uninstallState()
+    }
+
+    AsyncFunction("getLauncherStateAsync") {
+      launcherState()
+    }
+
+    /**
+     * Hides the app from the launcher, or brings it back.
+     *
+     * It needs the PIN in both directions: hiding is the sort of thing you might otherwise undo in
+     * a moment of weakness, and bringing the icon back is what makes the app easy to open again.
+     */
+    AsyncFunction("setLauncherHiddenAsync") { options: HideOptions ->
+      requirePin(options.pinHash)
+      LauncherVisibility.setHideLauncher(reactContext, options.hidden)
+      launcherState()
     }
 
     /**
@@ -506,6 +533,7 @@ class PornFreeVpnModule : Module() {
     out["deviceOwner"] = isDeviceOwner()
     out["installedAt"] = Store.installedAt(context)
     out["shouldRun"] = Store.shouldRun(context)
+    out["launcherHidden"] = LauncherVisibility.isHidden(context)
     return out
   }
 
@@ -525,6 +553,15 @@ class PornFreeVpnModule : Module() {
     "autoRestart" to config.autoRestart,
     "logDomains" to config.logDomains
   )
+
+  private fun launcherState(): Map<String, Any> {
+    val context = reactContext
+    return mapOf(
+      "hidden" to LauncherVisibility.isHidden(context),
+      "hideAfterUse" to LauncherVisibility.hideLauncher(context),
+      "secretCode" to LauncherVisibility.SECRET_CODE
+    )
+  }
 
   private fun uninstallState(): Map<String, Any> {
     val context = reactContext
