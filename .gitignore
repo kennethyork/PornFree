@@ -38,6 +38,15 @@ yarn-error.*
 
 app-example
 
+# release signing material: never commit these
+credentials/*.jks
+credentials/*.keystore
+credentials/keystore.properties
+
+# build artefacts
+*.apk
+*.aab
+
 # generated native folders
 /ios
 /android
