@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { APP_NAME } from '../lib/app-name';
 import { useProtection } from '../state/protection';
 import { useSecurity } from '../state/security';
 import { colors, radius, space } from '../theme';
@@ -32,7 +33,7 @@ export function SetupWizard() {
 
   const choosePin = async () => {
     await acquirePin(
-      'This PIN guards everything in PornFree. Write it down somewhere you can find it again: there is no way to recover it.',
+      `This PIN guards everything in ${APP_NAME}. Write it down somewhere you can find it again: there is no way to recover it.`,
       'create'
     );
   };
@@ -52,7 +53,7 @@ export function SetupWizard() {
     >
       <View style={styles.brand}>
         <Ionicons name="shield-checkmark" size={34} color={colors.accent} />
-        <Text style={styles.brandName}>PornFree</Text>
+        <Text style={styles.brandName}>{APP_NAME}</Text>
         <Text style={styles.brandTag}>Setup takes under a minute</Text>
       </View>
 
@@ -76,7 +77,7 @@ export function SetupWizard() {
         <Card>
           <Text style={styles.title}>Filtering that no app can ignore</Text>
           <Text style={styles.body}>
-            PornFree answers DNS on this phone, so every app is covered without any setup inside
+            {APP_NAME} answers DNS on this phone, so every app is covered without any setup inside
             them. Nothing is sent anywhere except the DNS lookups themselves.
           </Text>
           <View style={styles.bullets}>
@@ -113,7 +114,7 @@ export function SetupWizard() {
         <Card>
           <Text style={styles.title}>Turn on protection</Text>
           <Text style={styles.body}>
-            Android will ask once for permission to create a VPN. PornFree uses it only to see DNS:
+            Android will ask once for permission to create a VPN. {APP_NAME} uses it only to see DNS:
             the tunnel carries the addresses of public resolvers and nothing else, so your normal
             traffic is untouched.
           </Text>
@@ -159,7 +160,7 @@ export function SetupWizard() {
           <View style={styles.bullets}>
             <Bullet
               icon="eye-off-outline"
-              text="Settings → Visibility hides PornFree's icon, if you would rather not be reminded that it is there."
+              text={`Settings → Visibility hides ${APP_NAME}'s icon, if you would rather not be reminded that it is there.`}
             />
             <Bullet
               icon="hourglass-outline"

@@ -31,6 +31,9 @@
   by `plugins/withLauncherAlias.js`. It must never disable `MainActivity`: an app whose launcher
   activity is disabled cannot be started by anything - not its own notification, not a deep link, not
   adb - and doing that locked users out of their own app once already.
+- Never hardcode the app's name in a user-visible string. It comes from `expo.name` in `app.json` and is
+  read at runtime - `APP_NAME` from `src/lib/app-name.ts` in JavaScript, `applicationInfo.loadLabel` in
+  Kotlin - so the label can be made discreet with one line. The shipping label is deliberately neutral.
 - Keep every way back in working while the icon is hidden: the ongoing notification and
   `pornfree://open` (both through `VaultActivity`), Recents, `adb shell am start`, and the
   `*#*#7676#*#*` secret code. Hiding is refused when there is no reachable way back

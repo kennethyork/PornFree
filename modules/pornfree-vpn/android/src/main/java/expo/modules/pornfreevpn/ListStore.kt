@@ -51,7 +51,7 @@ object BundledLists {
  */
 object ListStore {
   private const val DIR = "lists"
-  private const val USER_AGENT = "PornFree/1.0"
+  private const val USER_AGENT_SUFFIX = "/1.0"
   private const val MAX_BYTES = 64L * 1024 * 1024
   private const val MAX_REDIRECTS = 5
 
@@ -93,7 +93,7 @@ object ListStore {
         connectTimeout = 15_000
         readTimeout = 45_000
         instanceFollowRedirects = false
-        setRequestProperty("User-Agent", USER_AGENT)
+        setRequestProperty("User-Agent", userAgent(context))
         setRequestProperty("Accept-Encoding", "gzip")
       }
       var stream: InputStream? = null
@@ -129,6 +129,13 @@ object ListStore {
         connection.disconnect()
       }
     }
+  }
+
+  /** Follows the app's own label, so a discreet name is not undone by a network header. */
+  private fun userAgent(context: Context): String = try {
+    context.applicationInfo.loadLabel(context.packageManager).toString() + USER_AGENT_SUFFIX
+  } catch (_: Exception) {
+    "DomainListFetcher" + USER_AGENT_SUFFIX
   }
 
   fun delete(context: Context, id: String): Boolean {

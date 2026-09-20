@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
 import { SetupWizard } from '../src/components/setup-wizard';
+import { APP_NAME } from '../src/lib/app-name';
 import { ProtectionProvider } from '../src/state/protection';
 import { SecurityProvider, useSecurity } from '../src/state/security';
 import { colors, space } from '../src/theme';
@@ -20,7 +21,7 @@ function ProtectionGate({ children }: { children: ReactNode }) {
     return (
       <View style={styles.boot}>
         <ActivityIndicator color={colors.accent} />
-        <Text style={styles.bootText}>Starting PornFree…</Text>
+        <Text style={styles.bootText}>Starting {APP_NAME}…</Text>
       </View>
     );
   }

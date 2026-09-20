@@ -30,6 +30,13 @@ class VaultActivity : Activity() {
     openOrExplain()
   }
 
+  /** The name shown on the device, so a discreet label needs no code change here. */
+  private fun appName(): String = try {
+    applicationInfo.loadLabel(packageManager).toString()
+  } catch (_: Exception) {
+    "The app"
+  }
+
   private fun openOrExplain() {
     val launch = LauncherVisibility.launchIntent(this)
     if (launch != null) {
@@ -51,7 +58,7 @@ class VaultActivity : Activity() {
     val padding = (resources.displayMetrics.density * 24).toInt()
 
     val title = TextView(this).apply {
-      text = "PornFree is hidden"
+      text = "${appName()} is hidden"
       setTextColor(Color.parseColor("#F8FAFC"))
       textSize = 20f
       setTypeface(typeface, Typeface.BOLD)
@@ -67,7 +74,7 @@ class VaultActivity : Activity() {
     }
 
     val button = Button(this).apply {
-      text = "Open PornFree"
+      text = "Open ${appName()}"
       setOnClickListener { openOrExplain() }
     }
 

@@ -22,7 +22,7 @@ class VpnPermissionMissingException : CodedException(
 
 class NotDeviceOwnerException : CodedException(
   "ERR_NOT_DEVICE_OWNER",
-  "This needs PornFree to be provisioned as device owner",
+  "This needs the app to be provisioned as device owner",
   null
 )
 
@@ -30,13 +30,13 @@ class WrongPinException : CodedException("ERR_WRONG_PIN", "That PIN is not corre
 
 class PinRequiredException : CodedException(
   "ERR_PIN_REQUIRED",
-  "Set a PIN first: PornFree refuses to run without one",
+  "Set a PIN first: this app refuses to run without one",
   null
 )
 
 class HideUnavailableException : CodedException(
   "ERR_HIDE_UNAVAILABLE",
-  "Allow notifications for PornFree first. The ongoing notification is the only way back into a " +
+  "Allow notifications for this app first. The ongoing notification is the only way back into a " +
     "hidden app, and hiding without it would lock you out.",
   null
 )

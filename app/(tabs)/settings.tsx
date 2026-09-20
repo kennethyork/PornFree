@@ -7,6 +7,7 @@ import { Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'r
 import Native from '../../modules/pornfree-vpn';
 import type { BlockMode, LauncherState, UninstallState } from '../../modules/pornfree-vpn';
 import { Card, Chevron, Pill, SettingRow, ToggleRow, styles as ui } from '../../src/components/ui';
+import { APP_NAME } from '../../src/lib/app-name';
 import { Links } from '../../src/lib/links';
 import { ensureNotificationPermission } from '../../src/lib/notifications';
 import { RESOLVER_PRESETS, resolverPresetFor } from '../../src/lib/lists';
@@ -90,7 +91,7 @@ export default function SettingsScreen() {
             Alert.alert(
               'Notifications are off',
               'The ongoing notification is the only way back into a hidden app. Allow notifications ' +
-                'for PornFree first, or you would be locked out of your own app.',
+                `for ${APP_NAME} first, or you would be locked out of your own app.`,
               [
                 { text: 'Not now', style: 'cancel' },
                 { text: 'Notification settings', onPress: () => void Linking.openSettings() },
@@ -235,11 +236,11 @@ export default function SettingsScreen() {
           title="Hide from the launcher"
           subtitle={
             launcher?.hidden
-              ? 'PornFree has no launcher icon. Open it from the ongoing notification, or with ' +
+              ? `${APP_NAME} has no launcher icon. Open it from the ongoing notification, or with ` +
                 `pornfree://open. Dialling *#*#${launcher?.secretCode ?? '7676'}#*#* brings the icon back.`
               : launcher?.notificationsEnabled === false
-                ? 'Notifications are switched off for PornFree. The ongoing notification is how a hidden app is opened, so allow them first or you would be locked out.'
-                : 'Removes PornFree from your launcher. The app keeps working, and the ongoing notification opens it. Not uninstall protection: Settings → Apps still lists it.'
+                ? `Notifications are switched off for ${APP_NAME}. The ongoing notification is how a hidden app is opened, so allow them first or you would be locked out.`
+                : `Removes ${APP_NAME} from your launcher. The app keeps working, and the ongoing notification opens it. Not uninstall protection: Settings → Apps still lists it.`
           }
           value={launcher?.hideAfterUse ?? false}
           disabled={busy || !launcher}
@@ -286,7 +287,7 @@ export default function SettingsScreen() {
       <Text style={ui.sectionTitle}>About</Text>
       <Card>
         <SettingRow
-          title="PornFree"
+          title={APP_NAME}
           subtitle={`Version ${Application.nativeApplicationVersion ?? '1.0.0'} · GPL-3.0 · Android only`}
         />
         <View style={styles.divider} />
@@ -313,7 +314,7 @@ export default function SettingsScreen() {
         <View style={styles.divider} />
         <SettingRow
           title="Source code"
-          subtitle="github.com/kennethyork/PornFree · GPL-3.0"
+          subtitle="Source on GitHub · GPL-3.0"
           onPress={() => void Linking.openURL(Links.repository)}
           right={<Chevron />}
         />

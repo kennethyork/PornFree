@@ -14,9 +14,10 @@ import android.content.Intent
 class SecretCodeReceiver : BroadcastReceiver() {
   override fun onReceive(context: Context, intent: Intent?) {
     LauncherVisibility.setHideLauncher(context, false)
+    // No app name: this notification can appear on a locked screen.
     Notices.post(
       context,
-      "PornFree is visible again",
+      "App icon restored",
       "Open it from your app list. Turn hiding back on in Settings when you are done."
     )
   }

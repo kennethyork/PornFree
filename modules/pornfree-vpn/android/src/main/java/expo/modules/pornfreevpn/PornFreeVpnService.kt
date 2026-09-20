@@ -250,7 +250,8 @@ class PornFreeVpnService : VpnService() {
 
   private fun establish(config: VpnConfig): ParcelFileDescriptor? {
     val builder = Builder()
-      .setSession("PornFree")
+      // Shown in Android's VPN settings, so it follows the app's own label.
+      .setSession(applicationInfo.loadLabel(packageManager).toString())
       .setMtu(NetworkConstants.MTU)
       .addAddress(NetworkConstants.TUN_ADDRESS_V4, 32)
 

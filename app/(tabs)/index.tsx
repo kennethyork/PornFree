@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ShieldDial } from '../../src/components/shield';
 import { Button, Card, EmptyState, Pill, StatTile, styles as ui } from '../../src/components/ui';
+import { APP_NAME } from '../../src/lib/app-name';
 import { formatDuration, formatNumber, formatRelative } from '../../src/lib/format';
 import { recentBlocked } from '../../src/lib/history';
 import { useProtection } from '../../src/state/protection';
@@ -53,7 +54,7 @@ export default function ShieldScreen() {
   if (!ready || !status) {
     return (
       <View style={styles.loading}>
-        <Text style={styles.splashTitle}>PornFree</Text>
+        <Text style={styles.splashTitle}>{APP_NAME}</Text>
         <Text style={styles.splashText}>Starting protection…</Text>
       </View>
     );
@@ -68,7 +69,7 @@ export default function ShieldScreen() {
       contentContainerStyle={[styles.content, { paddingTop: insets.top + space(4) }]}
     >
       <View style={styles.brandRow}>
-        <Text style={styles.brand}>PornFree</Text>
+        <Text style={styles.brand}>{APP_NAME}</Text>
         <Pill
           label={active ? 'Filtering' : 'Off'}
           tone={active ? 'success' : 'neutral'}
@@ -86,7 +87,7 @@ export default function ShieldScreen() {
         <Card style={styles.warnCard}>
           <Text style={styles.warnTitle}>Android needs your permission first</Text>
           <Text style={styles.warnText}>
-            PornFree filters by running a local VPN that only handles DNS. Android will show a
+            {APP_NAME} filters by running a local VPN that only handles DNS. Android will show a
             one-time consent dialog.
           </Text>
           <Button title="Grant permission" onPress={() => void requestPermission()} icon="key" />
@@ -156,7 +157,7 @@ export default function ShieldScreen() {
       </Card>
 
       <Text style={styles.footnote}>
-        PornFree filters DNS lookups for porn and adult domains. It never sees the contents of your
+        {APP_NAME} filters DNS lookups for adult domains. It never sees the contents of your
         traffic, and nothing leaves the device except the DNS queries themselves.
       </Text>
     </ScrollView>

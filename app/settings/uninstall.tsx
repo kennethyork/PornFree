@@ -7,6 +7,7 @@ import { Alert, Linking, ScrollView, StyleSheet, Text, View } from 'react-native
 import Native from '../../modules/pornfree-vpn';
 import type { UninstallState } from '../../modules/pornfree-vpn';
 import { Button, Card, Pill, SettingRow, ToggleRow, styles as ui } from '../../src/components/ui';
+import { APP_NAME } from '../../src/lib/app-name';
 import { Links } from '../../src/lib/links';
 import { useProtection } from '../../src/state/protection';
 import { useSecurity } from '../../src/state/security';
@@ -109,7 +110,7 @@ export default function UninstallProtectionScreen() {
   const releaseDeviceOwner = useCallback(() => {
     Alert.alert(
       'Turn off device owner mode?',
-      'This releases the uninstall lock and the always-on VPN setting. PornFree keeps filtering, but the app can then be removed like any other.',
+      `This releases the uninstall lock and the always-on VPN setting. ${APP_NAME} keeps filtering, but the app can then be removed like any other.`,
       [
         { text: 'Keep it', style: 'cancel' },
         {
@@ -151,8 +152,8 @@ export default function UninstallProtectionScreen() {
           </Text>
           <Text style={styles.statusBody}>
             {locked
-              ? 'Android will refuse to remove PornFree. Turning this off, or releasing device owner mode, asks for your PIN first.'
-              : 'PornFree can currently be removed like any other app.'}
+              ? `Android will refuse to remove ${APP_NAME}. Turning this off, or releasing device owner mode, asks for your PIN first.`
+              : `${APP_NAME} can currently be removed like any other app.`}
           </Text>
         </View>
       </Card>
@@ -201,7 +202,7 @@ export default function UninstallProtectionScreen() {
         <Card>
           <SettingRow
             title="Device owner"
-            subtitle="PornFree owns this device's policy, so it can lock its own removal."
+            subtitle={`${APP_NAME} owns this device's policy, so it can lock its own removal.`}
             right={<Pill label="Active" tone="success" />}
           />
           <View style={styles.divider} />

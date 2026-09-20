@@ -21,7 +21,8 @@ object Notices {
       "Protection",
       NotificationManager.IMPORTANCE_LOW
     )
-    channel.description = "Shows whether PornFree is filtering DNS"
+    // Deliberately does not name the app: the channel is visible in Android's settings.
+    channel.description = "Shows whether filtering is running"
     channel.setShowBadge(false)
     manager.createNotificationChannel(channel)
   }

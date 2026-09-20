@@ -163,6 +163,30 @@ Two consequences worth knowing:
 Setup changes nothing else: after the last step the app behaves like any other app, with its icon in
 your launcher.
 
+### The name on the device
+
+The project is called PornFree, but on a phone it presents itself as **Quiet**: that is the launcher
+label, the notification header and the name under *Settings → Apps*. A blocker that announces itself in
+every glimpse of your home screen is easier to switch off in a weak moment than one that quietly sits
+there.
+
+The label comes from one place, `expo.name` in `app.json`. Nothing user-visible hardcodes it: the UI
+reads it through `Application.applicationName`, and the native side reads it from
+`PackageManager.getApplicationLabel`, down to the user agent used for blocklist downloads. Renaming the
+app is therefore a one-line change plus `npm run android:release`.
+
+What a label does not hide, because Android decides it:
+
+| Still visible | Where |
+| --- | --- |
+| `dev.pornfree.app` | *Settings → Apps → App info → Advanced*, and any package inspector |
+| The GitHub link in *Settings → About* | inside the app |
+| Nothing else | the notification, the VPN entry and the app list all use the label |
+
+Deeper discretion means changing `android.package` in `app.json` as well (that is a fresh install, and
+`docs/UNINSTALL-PROTECTION.md` has the component name to update) and pointing `src/lib/links.ts` at your
+own fork.
+
 ### Hiding the icon
 
 Hiding is opt-in, under **Settings → Visibility**. When it is on, PornFree has no launcher icon: not on
