@@ -1,19 +1,19 @@
 {
   "expo": {
     "name": "Quiet",
-    "slug": "pornfree",
-    "version": "1.0.5",
+    "slug": "quiet",
+    "version": "1.0.6",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "pornfree",
+    "scheme": "quiet",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "platforms": [
       "android"
     ],
     "android": {
-      "package": "dev.pornfree.app",
-      "versionCode": 6,
+      "package": "dev.quiet.app",
+      "versionCode": 7,
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "adaptiveIcon": {
@@ -43,11 +43,7 @@
       "./plugins/withReleaseSigning"
     ],
     "extra": {
-      "router": {},
-      "eas": {
-        "projectId": "535bf627-655d-4bbe-a2cc-ff56a9eb3228"
-      }
-    },
-    "owner": "kennethhy"
+      "router": {}
+    }
   }
 }

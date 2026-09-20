@@ -2,7 +2,7 @@ import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import Native from '../../modules/pornfree-vpn';
+import Native from '../../modules/quiet-vpn';
 import { Button, Card, Divider, Pill, SettingRow, styles as ui } from '../../src/components/ui';
 import { describeCountdown } from '../../src/lib/format';
 import { useProtection } from '../../src/state/protection';

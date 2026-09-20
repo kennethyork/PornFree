@@ -110,27 +110,30 @@ native tunnel applies them. That keeps the fast path free of bridge traffic.
 
 | File | Responsibility |
 | --- | --- |
-| `PornFreeVpnService.kt` | Tunnel lifecycle, packet loop, DNS relay, cache, counters |
+| `QuietVpnService.kt` | Tunnel lifecycle, packet loop, DNS relay, cache, counters |
 | `DnsWire.kt` | Question parsing, synthesised answers, EDNS clamping |
 | `IpWire.kt` | IPv4/IPv6/UDP/ICMP parsing and reply construction with checksums |
 | `DomainRules.kt` | List parsing, normalisation, suffix matching |
 | `NetworkConstants.kt` | Which addresses get routed into the tunnel |
 | `ListStore.kt` | Bundled lists, downloads, atomic rewrites |
 | `Store.kt` | Settings, daily counters, PIN hash, commitment |
-| `PornFreeVpnModule.kt` | The JavaScript API, PIN enforcement, device owner actions |
+| `QuietVpnModule.kt` | The JavaScript API, PIN enforcement, device owner actions |
 
-## Renaming the internal identifiers
+## Names and identifiers
 
-The app is called Quiet everywhere a user can see it, but some identifiers still carry the project's
-first name: the `dev.pornfree.app` package, the `expo.modules.pornfreevpn` Kotlin package, the
-`modules/pornfree-vpn` directory, the `PornFreeVpn` JavaScript module, and the keys used for preferences,
-the SQLite database and the signing keystore.
+The app is called Quiet everywhere a user can see it, and the identifiers match:
 
-Changing them means touching `android.package` in `app.json`, the module directory and its
-`expo-module.config.json`, the Kotlin `package` lines and `Name("...")`, every import path, the storage
-keys, and the component name in `docs/UNINSTALL-PROTECTION.md`. It also costs every user a fresh install:
-Android treats a new package name as a different app, so the new copy starts with no lists, no PIN and no
-history, and the old copy has to be uninstalled by hand.
+| Identifier | Value |
+| --- | --- |
+| `expo.name` - launcher, notification header, app list | Quiet |
+| Package | `dev.quiet.app` |
+| Kotlin package | `expo.modules.quietvpn` |
+| Module directory | `modules/quiet-vpn` |
+| JavaScript module | `QuietVpn` |
+| Deep link | `quiet://open` |
+| Dialer code | `*#*#78438#*#*` |
 
-They were left alone on purpose - it is churn with no user-visible benefit, and keeping the package name
-is what lets an update install over an existing copy.
+The package name is the one that cannot be changed without cost. Android treats a new package as a
+different app: the old copy stays installed, the new one starts with no lists, no PIN and no history, and
+the device owner component in `docs/UNINSTALL-PROTECTION.md` has to be updated. Everything else is
+internal and free to change.

@@ -68,6 +68,18 @@ module.exports = function withLauncherAlias(config) {
     if (aliases.some((alias) => alias.$?.['android:name'] === aliasName)) {
       return cfg; // already applied
     }
+    // An alias for a different package name means the generated project predates a change to
+    // android.package. Regenerating is the only honest fix, and the error says so.
+    const staleAlias = aliases.find((alias) =>
+      (alias.$?.['android:name'] ?? '').endsWith('.LauncherAlias')
+    );
+    if (staleAlias) {
+      throw new Error(
+        'withLauncherAlias: the generated android/ project still belongs to ' +
+          `${staleAlias.$['android:name'].replace(/\.LauncherAlias$/, '')}, but android.package is ` +
+          `${pkg}. Run \`npx expo prebuild -p android --clean\` to regenerate it.`
+      );
+    }
 
     const activities = application.activity ?? [];
     const relative = '.MainActivity';
@@ -86,7 +98,12 @@ module.exports = function withLauncherAlias(config) {
     const filters = main['intent-filter'] ?? [];
     const remaining = filters.filter((filter) => !isLauncherFilter(filter));
     if (remaining.length === filters.length) {
-      throw new Error('withLauncherAlias: MainActivity has no MAIN/LAUNCHER intent filter to move');
+      throw new Error(
+        'withLauncherAlias: MainActivity has no MAIN/LAUNCHER intent filter to move. Either the ' +
+          'generated project is stale (run `npx expo prebuild -p android --clean`) or the Expo ' +
+          'template no longer declares the launcher on MainActivity, in which case this plugin needs ' +
+          'updating.'
+      );
     }
     // Keep the deep link filter that expo-router needs.
     main['intent-filter'] = remaining;

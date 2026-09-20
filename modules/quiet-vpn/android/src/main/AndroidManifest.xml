@@ -1,0 +1,99 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+  <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+  <application>
+
+    <!--
+      The filtering engine. Android routes only the address ranges added by the service into this
+      tunnel; exported="true" is what lets the system use it for "Always-on VPN" as well, and it is
+      safe because only the system can hold BIND_VPN_SERVICE.
+    -->
+    <service
+      android:name="expo.modules.quietvpn.QuietVpnService"
+      android:exported="true"
+      android:permission="android.permission.BIND_VPN_SERVICE"
+      android:foregroundServiceType="specialUse">
+      <property
+        android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+        android:value="vpn" />
+      <intent-filter>
+        <action android:name="android.net.VpnService" />
+      </intent-filter>
+    </service>
+
+    <!-- Headless activity that carries the system VPN consent result back to JavaScript. -->
+    <activity
+      android:name="expo.modules.quietvpn.VpnConsentActivity"
+      android:excludeFromRecents="true"
+      android:exported="false"
+      android:noHistory="true"
+      android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+    <receiver
+      android:name="expo.modules.quietvpn.BootReceiver"
+      android:enabled="true"
+      android:exported="false">
+      <intent-filter>
+        <action android:name="android.intent.action.BOOT_COMPLETED" />
+        <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+      </intent-filter>
+    </receiver>
+
+    <!--
+      Way back in while the launcher icon is hidden: the ongoing notification and quiet://open
+      both open this, which hands over to the app's UI directly.
+    -->
+    <activity
+      android:name="expo.modules.quietvpn.VaultActivity"
+      android:excludeFromRecents="true"
+      android:exported="true"
+      android:noHistory="true"
+      android:theme="@android:style/Theme.Translucent.NoTitleBar">
+      <!--
+        Last-resort way back: opening quiet://open from anywhere (a browser, a bookmark, a QR
+        code) reaches this activity even while the app's own launcher activity is disabled.
+        Harmless if abused: it only brings the app's icon back and opens it.
+      -->
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data
+          android:host="open"
+          android:scheme="quiet" />
+      </intent-filter>
+    </activity>
+
+    <!-- Dial *#*#78438#*#* to bring the icon back when notifications are unavailable. -->
+    <receiver
+      android:name="expo.modules.quietvpn.SecretCodeReceiver"
+      android:exported="true">
+      <intent-filter>
+        <action android:name="android.provider.Telephony.SECRET_CODE" />
+        <data
+          android:host="78438"
+          android:scheme="android_secret_code" />
+      </intent-filter>
+    </receiver>
+
+    <!-- Only used when the app is provisioned as device owner or profile owner. -->
+    <receiver
+      android:name="expo.modules.quietvpn.QuietDeviceAdminReceiver"
+      android:exported="true"
+      android:permission="android.permission.BIND_DEVICE_ADMIN">
+      <meta-data
+        android:name="android.app.device_admin"
+        android:resource="@xml/quiet_device_admin" />
+      <intent-filter>
+        <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+      </intent-filter>
+    </receiver>
+
+  </application>
+</manifest>

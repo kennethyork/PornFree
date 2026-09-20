@@ -45,7 +45,7 @@ jobs:
         run: npx expo prebuild -p android
 
       - name: Unit tests
-        run: cd android && ./gradlew :pornfree-vpn:testDebugUnitTest
+        run: cd android && ./gradlew :quiet-vpn:testDebugUnitTest
 
   # Builds the APK you install on a phone, and publishes it as a workflow artifact.
   apk:
@@ -89,7 +89,7 @@ jobs:
             exit 0
           fi
           mkdir -p credentials
-          printf '%s' "$KEYSTORE_BASE64" | base64 -d > credentials/pornfree-release.jks
+          printf '%s' "$KEYSTORE_BASE64" | base64 -d > credentials/quiet-release.jks
           printf '%s\n' "$KEYSTORE_PROPERTIES" > credentials/keystore.properties
           echo "signing=release keystore" >> "$GITHUB_OUTPUT"
 
@@ -132,7 +132,7 @@ jobs:
             echo "| | |"
             echo "| --- | --- |"
             echo "| File | \`${{ steps.collect.outputs.label }}-${{ steps.collect.outputs.version }}.apk\` |"
-            echo "| Package | \`dev.pornfree.app\` |"
+            echo "| Package | \`dev.quiet.app\` |"
             echo "| Architectures | arm64-v8a, armeabi-v7a (every real phone) |"
             echo "| Signed with | ${{ steps.keystore.outputs.signing }} |"
             echo "| Commit | \`${{ github.sha }}\` |"
@@ -162,7 +162,7 @@ jobs:
           ### Install
 
           The app is called **Quiet** in the launcher, in notifications and under Settings > Apps. Its
-          package name is still `dev.pornfree.app`, which is what Android and the device owner command
+          package name is still `dev.quiet.app`, which is what Android and the device owner command
           refer to.
 
           Copy the APK to an Android phone (Android 7 or newer) and open it. Tap the shield, allow the

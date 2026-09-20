@@ -63,7 +63,7 @@ jail for the device.
 4. Connect the phone to a computer with `adb` installed and run:
 
    ```sh
-   adb shell dpm set-device-owner dev.pornfree.app/expo.modules.pornfreevpn.PornFreeDeviceAdminReceiver
+   adb shell dpm set-device-owner dev.quiet.app/expo.modules.quietvpn.QuietDeviceAdminReceiver
    ```
 
    If adb complains about accounts, remove the remaining ones and try again. Some devices also want
@@ -79,7 +79,7 @@ From inside the app (needs your PIN): *Settings → Uninstall protection → Rel
 From a computer, if you would rather not use the app:
 
 ```sh
-adb shell dpm remove-active-admin dev.pornfree.app/expo.modules.pornfreevpn.PornFreeDeviceAdminReceiver
+adb shell dpm remove-active-admin dev.quiet.app/expo.modules.quietvpn.QuietDeviceAdminReceiver
 ```
 
 Both paths release the uninstall lock and the always-on VPN setting.

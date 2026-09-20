@@ -4,8 +4,8 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Alert, Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import Native from '../../modules/pornfree-vpn';
-import type { UninstallState } from '../../modules/pornfree-vpn';
+import Native from '../../modules/quiet-vpn';
+import type { UninstallState } from '../../modules/quiet-vpn';
 import { Button, Card, Pill, SettingRow, ToggleRow, styles as ui } from '../../src/components/ui';
 import { APP_NAME } from '../../src/lib/app-name';
 import { Links } from '../../src/lib/links';
@@ -14,7 +14,7 @@ import { useSecurity } from '../../src/state/security';
 import { colors, radius, space } from '../../src/theme';
 
 const FALLBACK_COMPONENT =
-  'dev.pornfree.app/expo.modules.pornfreevpn.PornFreeDeviceAdminReceiver';
+  'dev.quiet.app/expo.modules.quietvpn.QuietDeviceAdminReceiver';
 
 function errorMessage(failure: unknown): string {
   if (failure && typeof failure === 'object' && 'message' in failure) {

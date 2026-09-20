@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const KEY = 'pornfree.onboarded';
+const KEY = 'quiet.onboarded';
 
 /**
  * Whether the first-run setup was completed.

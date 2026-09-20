@@ -9,13 +9,13 @@ import {
   type ReactNode,
 } from 'react';
 
-import Native from '../../modules/pornfree-vpn';
+import Native from '../../modules/quiet-vpn';
 import type {
   BlocklistInfo,
   BlockedDomainEvent,
   ProtectionConfig,
   ProtectionStatus,
-} from '../../modules/pornfree-vpn';
+} from '../../modules/quiet-vpn';
 import { pruneHistory, recordBlocked } from '../lib/history';
 import { ensureNotificationPermission } from '../lib/notifications';
 

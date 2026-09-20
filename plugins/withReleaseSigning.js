@@ -14,22 +14,22 @@ const { withAppBuildGradle } = require('expo/config-plugins');
 
 const PROPERTIES_LOADING = `
 // --- injected by plugins/withReleaseSigning.js ---
-def pfKeystoreProps = new Properties()
-def pfKeystorePropsFile = new File(projectRoot, "credentials/keystore.properties")
-if (pfKeystorePropsFile.exists()) {
-    pfKeystorePropsFile.withInputStream { pfKeystoreProps.load(it) }
+def quietKeystoreProps = new Properties()
+def quietKeystorePropsFile = new File(projectRoot, "credentials/keystore.properties")
+if (quietKeystorePropsFile.exists()) {
+    quietKeystorePropsFile.withInputStream { quietKeystoreProps.load(it) }
 }
-def pfHasReleaseKeystore = pfKeystoreProps.getProperty("storeFile") != null
+def hasReleaseKeystore = quietKeystoreProps.getProperty("storeFile") != null
 // --- end injection ---
 `;
 
 const SIGNING_CONFIG = `
-        if (pfHasReleaseKeystore) {
+        if (hasReleaseKeystore) {
             release {
-                storeFile new File(projectRoot, pfKeystoreProps.getProperty("storeFile"))
-                storePassword pfKeystoreProps.getProperty("storePassword")
-                keyAlias pfKeystoreProps.getProperty("keyAlias")
-                keyPassword pfKeystoreProps.getProperty("keyPassword")
+                storeFile new File(projectRoot, quietKeystoreProps.getProperty("storeFile"))
+                storePassword quietKeystoreProps.getProperty("storePassword")
+                keyAlias quietKeystoreProps.getProperty("keyAlias")
+                keyPassword quietKeystoreProps.getProperty("keyPassword")
             }
         }
 `;
@@ -41,7 +41,7 @@ module.exports = function withReleaseSigning(config) {
     }
 
     let contents = cfg.modResults.contents;
-    if (contents.includes('pfHasReleaseKeystore')) return cfg; // already applied
+    if (contents.includes('hasReleaseKeystore')) return cfg; // already applied
 
     const fail = (what) => {
       throw new Error(
@@ -63,7 +63,7 @@ module.exports = function withReleaseSigning(config) {
     contents = contents.replace(
       releaseSigning,
       `            // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig pfHasReleaseKeystore ? signingConfigs.release : signingConfigs.debug`
+            signingConfig hasReleaseKeystore ? signingConfigs.release : signingConfigs.debug`
     );
 
     cfg.modResults.contents = contents;

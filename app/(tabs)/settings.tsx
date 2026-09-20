@@ -4,8 +4,8 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import Native from '../../modules/pornfree-vpn';
-import type { BlockMode, LauncherState, UninstallState } from '../../modules/pornfree-vpn';
+import Native from '../../modules/quiet-vpn';
+import type { BlockMode, LauncherState, UninstallState } from '../../modules/quiet-vpn';
 import { Card, Chevron, Pill, SettingRow, ToggleRow, styles as ui } from '../../src/components/ui';
 import { APP_NAME } from '../../src/lib/app-name';
 import { Links } from '../../src/lib/links';
@@ -237,7 +237,7 @@ export default function SettingsScreen() {
           subtitle={
             launcher?.hidden
               ? `${APP_NAME} has no launcher icon. Open it from the ongoing notification, or with ` +
-                `pornfree://open. Dialling *#*#${launcher?.secretCode ?? '7676'}#*#* brings the icon back.`
+                `quiet://open. Dialling *#*#${launcher?.secretCode ?? '78438'}#*#* brings the icon back.`
               : launcher?.notificationsEnabled === false
                 ? `Notifications are switched off for ${APP_NAME}. The ongoing notification is how a hidden app is opened, so allow them first or you would be locked out.`
                 : `Removes ${APP_NAME} from your launcher. The app keeps working, and the ongoing notification opens it. Not uninstall protection: Settings → Apps still lists it.`
